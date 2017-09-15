@@ -15,7 +15,7 @@
    * Event listeners for UI elements
    *
    ****************************************************************************/
-  document.getElementById('butAdd').addEventListener('click', function() {
+  document.getElementById('addWidgetButton').addEventListener('click', function() {
     app.openAddDialog();
   });
 
@@ -39,11 +39,8 @@
   //Main Method run after startup run everything in here.
   app.main = function(data) {
     //  Run the main logic here.
-
     //  Get the Widgets list
-
     //  Draw the widget list
-
     if (app.isLoading) {
       app.spinner.setAttribute('hidden', true);
       app.container.removeAttribute('hidden');
@@ -53,6 +50,7 @@
 
   // TODO add startup code here
   app.main();
+
 
   // TODO add service worker code here
   if ('serviceWorker' in navigator) {
