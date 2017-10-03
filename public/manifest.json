@@ -1,29 +1,29 @@
 {
-  "name": "Weather",
-  "short_name": "Weather",
+  "name": "Digital Student Toolkit",
+  "short_name": "Student Toolkit",
   "icons": [{
-    "src": "images/icons/icon-128x128.png",
+    "src": "images/icons/favicon-128.png",
       "sizes": "128x128",
       "type": "image/png"
     }, {
-      "src": "images/icons/icon-144x144.png",
+      "src": "images/icons/mstile-144x144.png",
       "sizes": "144x144",
       "type": "image/png"
     }, {
-      "src": "images/icons/icon-152x152.png",
+      "src": "images/icons/apple-touch-icon-152x152.png",
       "sizes": "152x152",
       "type": "image/png"
     }, {
-      "src": "images/icons/icon-192x192.png",
-      "sizes": "192x192",
+      "src": "images/icons/favicon-196x196.png",
+      "sizes": "196x196",
       "type": "image/png"
     }, {
-      "src": "images/icons/icon-256x256.png",
-      "sizes": "256x256",
+      "src": "images/icons/mstile-310x310.png",
+      "sizes": "310x310",
       "type": "image/png"
     }],
   "start_url": "/index.html",
   "display": "standalone",
-  "background_color": "#FFFAAB",
-  "theme_color": "#FFFAAB"
+  "background_color": "#95A792",
+  "theme_color": "#596C68"
 }
