@@ -62,7 +62,7 @@ body {
   width: 100%;
   height: 56px;
   color: #FFF;
-  background: #3F51B5;
+  background: #403F48;
   position: fixed;
   font-size: 20px;
   box-shadow: 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 2px 9px 1px rgba(0, 0, 0, 0.12), 0 4px 2px -2px rgba(0, 0, 0, 0.2);
@@ -181,8 +181,10 @@ body {
     -webkit-transform: rotate(90deg);
             transform: rotate(90deg); } }
 
+/* Dashboard Container */
 .main {
   padding-top: 60px;
+  background-color: #E3D9CA;
   -webkit-box-flex: 1;
   -webkit-flex: 1;
       -ms-flex: 1;
@@ -190,6 +192,38 @@ body {
   overflow-x: hidden;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch; }
+
+ /*  Grid Container  */
+.section {
+  clear: both;
+  padding: 20px;
+  margin: 0px;
+}
+
+/*  Column setup  */
+.col {
+  display: block;
+  float:left;
+  margin: 1% 0 1% 1.6%;
+}
+.col:first-child { margin-left: 0; }
+
+/*  Column Grouping  */
+.group:before,
+.group:after { content:""; display:table; }
+.group:after { clear:both;}
+.group { zoom:1; /* For IE 6/7 */ } 
+
+/*  Grid of Three Columns: Width Spacing  */
+.span_3_of_3 { width: 100%; }
+.span_2_of_3 { width: 66.13%; }
+.span_1_of_3 { width: 32.26%; }
+
+/*  Go full width below 480 pixels */
+@media only screen and (max-width: 480px) {
+  .col {  margin: 1% 0 1% 0%; }
+  .span_3_of_3, .span_2_of_3, .span_1_of_3 { width: 100%; }
+}
 
 .dialog-container {
   background: rgba(0, 0, 0, 0.57);
