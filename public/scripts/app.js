@@ -37,17 +37,18 @@
   };
 
   //Main Method run after startup run everything in here.
-    app.main = function() {
-      //  Run the main logic here.
-      //  Get the Widgets list
-      //  Draw the widget list
-      if (app.isLoading) {
-        app.spinner.setAttribute('hidden', true);
-        app.container.removeAttribute('hidden');
-        app.isLoading = false;
-      }
+  app.main = function(data) {
+    //  Run the main logic here.
+    //  Get the Widgets list
+    //  Draw the widget list
+    if (app.isLoading) {
+      app.spinner.setAttribute('hidden', true);
+      app.container.removeAttribute('hidden');
+      app.isLoading = false;
+    }
   };
 
+  // TODO add startup code here
   app.main();
 
 
@@ -55,6 +56,6 @@
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker
              .register('./service-worker.js')
-             .then(function() { console.log('Service Worker Registered :)'); });
+             .then(function() { console.log('Service Worker Registered'); });
   }
 })();
