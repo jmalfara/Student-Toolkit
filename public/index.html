@@ -46,6 +46,13 @@
 
 <body>
 
+  <!--Init Firebase Things-->
+  <script src="https://www.gstatic.com/firebasejs/4.5.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/4.5.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/4.5.0/firebase-database.js"></script>
+  <script src="scripts/toolkit-api.js" async></script>
+  <script src="scripts/app.js" async></script>
+
   <header class="header">
     <h1 class="header__title">Digital Student Toolkit</h1>
     <button id="addWidgetButton" class="headerButton" aria-label="Add"></button>
@@ -99,10 +106,6 @@
       <circle id="spinner" cx="16" cy="16" r="14" fill="none"></circle>
     </svg>
   </div>
-
-  <!-- Uncomment the line below when ready to test with fake data -->
-  <!-- TODO: Add the javascript files binded to backend functionality here -->
-  <script src="scripts/app.js" async></script>
 
 </body>
 </html>
