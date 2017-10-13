@@ -27,6 +27,7 @@ html, body {
   font-display: optional;
   color: #444;
   -webkit-font-smoothing: antialiased;
+  -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale; }
 
 html {
@@ -244,6 +245,8 @@ body {
 
 .dialog {
   background: #FFF;
+  opacity: 0;
+  pointer-events: none;
   border-radius: 2px;
   box-shadow: 0 0 14px rgba(0, 0, 0, 0.24), 0 14px 28px rgba(0, 0, 0, 0.48);
   min-width: 280px;
@@ -256,6 +259,11 @@ body {
   transition: -webkit-transform 0.333s cubic-bezier(0, 0, 0.21, 1) 0.05s;
   transition: transform 0.333s cubic-bezier(0, 0, 0.21, 1) 0.05s;
   transition: transform 0.333s cubic-bezier(0, 0, 0.21, 1) 0.05s, -webkit-transform 0.333s cubic-bezier(0, 0, 0.21, 1) 0.05s; }
+
+.dialog--visible {
+  opacity: 1;
+  pointer-events: auto;
+}
 
 .dialog > div {
   padding-left: 24px;
