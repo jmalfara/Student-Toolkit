@@ -106,10 +106,10 @@ window.onload = function () {
     *
     ****************************************************************************/
     document.getElementById('addWidgetButton').addEventListener('click', function() {
-        if (!dialogIsOpen) {
+        if (!app.dialogIsOpen) {
             app.dialogContainer.classList.add('dialog-container--visible');
             app.addDialog.classList.add('dialog--visible');
-            dialogIsOpen = true;
+            app.dialogIsOpen = true;
         }
     });
 
@@ -132,13 +132,13 @@ window.onload = function () {
               //Force Login. make the dialog visible;
               app.dialogContainer.classList.add('dialog-container--visible');
               app.loginDialog.classList.add('dialog--visible');
-              dialogIsOpen = true;
+              app.dialogIsOpen = true;
               api.startLoginDialog(function () {
                   console.log("Login Complete!");
                   //Make the dialog invisible
                   app.dialogContainer.classList.remove('dialog-container--visible');
                   app.loginDialog.classList.remove('dialog--visible');
-                  dialogIsOpen = false;
+                  app.dialogIsOpen = false;
               });
           }
       });
