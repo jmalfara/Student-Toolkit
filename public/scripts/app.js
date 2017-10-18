@@ -116,6 +116,7 @@ window.onload = function () {
     document.getElementById('cancelButton').addEventListener('click', function() {
         app.dialogContainer.classList.remove('dialog-container--visible');
         app.addDialog.classList.remove('dialog--visible');
+        app.dialogIsOpen = false;
     });
 
     /*****************************************************************************
