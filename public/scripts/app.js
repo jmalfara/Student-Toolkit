@@ -11,6 +11,8 @@ function Api() {
 
     // Initialize the default app
     firebase.initializeApp(config);
+
+    // database creation through firebase hosting
     var database = firebase.database();
 
     this.startLoginDialog = function(callback) {
@@ -139,21 +141,36 @@ window.onload = function () {
 
     //Main Method run after startup run everything in here.
     app.main = function(data) {
-      api.isSignedIn(function (signedIn) {
-          console.log(signedIn);
-          if (!signedIn) {
-              //Force Login. make the dialog visible;
-              app.dialogContainer.classList.add('dialog-container--visible');
-              app.loginDialog.classList.add('dialog--visible');
-              app.dialogIsOpen = true;
-              api.startLoginDialog(function () {
-                  console.log("Login Complete!");
-                  //Make the dialog invisible
-                  app.dialogContainer.classList.remove('dialog-container--visible');
-                  app.loginDialog.classList.remove('dialog--visible');
-                  app.dialogIsOpen = false;
-              });
-          }
+
+    	// User authentication process
+		api.isSignedIn(function (signedIn) {
+    	console.log(signedIn);
+
+    	if (!signedIn) {
+
+			//Force Login. make the dialog visible;
+			app.dialogContainer.classList.add('dialog-container--visible');
+			app.loginDialog.classList.add('dialog--visible');
+			app.dialogIsOpen = true;
+
+			// Prompt the login screen
+			api.startLoginDialog(function () {
+		    	console.log("Login successfully complete!");
+
+		    	//Make the dialog invisible
+		    	app.dialogContainer.classList.remove('dialog-container--visible');
+		    	app.loginDialog.classList.remove('dialog--visible');
+		    	app.dialogIsOpen = false;
+
+		    	// Fetch all the available widgets for the signed in user
+				api.getUserWidgets(function (widgets) {
+              
+	      			userWidgets = JSON.stringify(Object.values(widgets), null, 4);
+	      			console.log("The retrieved user saved widgets are: \n" + userWidgets);
+    			});	
+
+			});
+		}
       });
 
       if (app.isLoading) {
@@ -161,6 +178,22 @@ window.onload = function () {
           app.container.removeAttribute('hidden');
           app.isLoading = false;
       }
+
+      // Retrieve all the widgets from the database
+      api.getAvailableWidgets(function (widgets) {
+      	
+      	// Parse the names from the widget object
+      	str = JSON.stringify(Object.values(widgets), null, 4);
+      	console.log("The available widgets from the database are: \n" + str);
+      	
+      	// Dynamically load the values from the widget list to html DOM
+      	var select = document.getElementById("selectWidgetToAdd");
+		for(index in widgets) {
+			select.options[select.options.length] = new Option(widgets[index], index);
+		}
+
+      });
+
     };
     app.main();
 
