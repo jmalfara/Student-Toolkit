@@ -23,7 +23,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Digital Student Toolkit</title>
   <link rel="stylesheet" type="text/css" href="styles/inline.css">
-  <link rel="icon" type="image/png" href="favicon-32x32.png" sizes="32x32" />
 
   <!-- TODO add manifest here -->
   <link rel="manifest" href="/manifest.json">
@@ -90,12 +89,15 @@
       <div class="dialog-title">Dashboard Widgets</div>
       <div class="dialog-body">
 
-          <!-- Add other widget options once finalized -->
+          <!-- Fetch the widget names from the db dynamically to add -->
           <select id="selectWidgetToAdd">
-              <option value="1">Notes</option>
-              <option value="2">Scheduler</option>
-              <option value="3">Maps</option>
-              <option value="4">GPA Calculator</option>
+
+          <!-- These were place holder values, the javascript dynamically loads the values from db
+          <option value="1">Notes</option>
+          <option value="2">Scheduler</option>
+          <option value="3">Maps</option>
+          <option value="4">GPA Calculator</option>
+          -->
 
           </select>
       </div>
