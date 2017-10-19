@@ -122,19 +122,6 @@ window.onload = function () {
             app.dialogContainer.classList.add('dialog-container--visible');
             app.addDialog.classList.add('dialog--visible');
             app.dialogIsOpen = true;
-            console.log("Push then fetch user widgets");
-            api.postUserWidgets({
-                id: "widget2",
-                type: "textbox",
-                hint: "Type Here",
-                value: ""
-            }, function (error) {
-                console.log(error);
-            });
-
-            api.getUserWidgets(function (data) {
-                console.log(data);
-            });
         }
     });
 
