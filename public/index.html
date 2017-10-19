@@ -52,7 +52,16 @@
   <script src="https://www.gstatic.com/firebasejs/4.5.0/firebase-database.js"></script>
   <script src="scripts/app.js" async></script>
   <script src="https://cdn.firebase.com/libs/firebaseui/2.4.0/firebaseui.js"></script>
-
+  <!--Init Jquery Things-->
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <link rel="stylesheet" href="/resources/demos/style.css">
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <script>
+  $( function() {
+    $( "#accordion" ).accordion();
+  } );
+  </script>
   <header class="header">
       <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/2.4.0/firebaseui.css" />
       <h1 class="header__title">Digital Student Toolkit</h1>
@@ -65,13 +74,16 @@
 		<div align="center" class="col span_1_of_3">
 			Notes
 			<br> <br>
-			<img src="https://png.icons8.com/note/dusk/64" title="Note" width="64" height="64">
+			<iframe src="https://open.spotify.com/embed?uri=spotify:album:1JZxCJ86P4GUYkHj03CgDT" width="300" height="380" frameborder="0" allowtransparency="true"></iframe>
 		</div>
-		<div align="center" class="col span_1_of_3">
-			Scheduler
-			<br> <br>
-			<img src="https://png.icons8.com/schedule/dusk/64" title="Schedule" width="64" height="64">
-		</div>
+		<!-- WIDGET # 2 -->
+    <div align="center" class="col span_1_of_3">
+    Notes
+    <br> <br>
+    <textarea cols="30" rows="10" charswidth="23" resize= none name="textarea" id="textarea-a">
+      RoyI'm a basic textarea. If this is pre-populated with content, the height will be automatically adjusted to fit without needing to scroll. That is a pretty handy usability feature.
+    </textarea>
+  </div>
 		<div align="center" class="col span_1_of_3">
 			Maps
 			<br> <br>
