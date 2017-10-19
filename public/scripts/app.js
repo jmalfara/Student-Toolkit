@@ -62,18 +62,30 @@ function Api() {
     }
 
     this.getUserWidgets = function(callback) {
-        if (user) {
-            var widgets = database.ref('userWidgets/'+user.uid+'/');
+        var unsubscribe = firebase.auth().onAuthStateChanged(function (currentUser) {
+            var widgets = database.ref('userWidgets/'+currentUser.uid+'/');
             widgets.once('value').then(function (snapshot) {
                 callback(snapshot.val());
-            })
-        } else {
-            console.error("User is not signed in")
-        }
-    }
+            });
+            unsubscribe();
+        }, function(error) {
+            console.error("User is not signed in: "+error);
+            unsubscribe();
+        });
+    };
 
     this.postUserWidgets = function(widgetData, callback) {
         //Get the ID from the widget and use that for the push.
+        var unsubscribe = firebase.auth().onAuthStateChanged(function (currentUser) {
+            var key = database.ref('userWidgets/'+currentUser.uid+'/').push();
+            key.set(widgetData, function (error) {
+                callback(error);
+            });
+            unsubscribe();
+        }, function(error) {
+            console.error("User is not signed in: "+error);
+            unsubscribe();
+        });
     };
 
     this.getWidgetTemplate = function(widgetName, callback) {
@@ -110,6 +122,19 @@ window.onload = function () {
             app.dialogContainer.classList.add('dialog-container--visible');
             app.addDialog.classList.add('dialog--visible');
             app.dialogIsOpen = true;
+            console.log("Push then fetch user widgets");
+            api.postUserWidgets({
+                id: "widget2",
+                type: "textbox",
+                hint: "Type Here",
+                value: ""
+            }, function (error) {
+                console.log(error);
+            });
+
+            api.getUserWidgets(function (data) {
+                console.log(data);
+            });
         }
     });
 
