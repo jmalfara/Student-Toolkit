@@ -133,6 +133,28 @@ window.onload = function () {
         app.dialogIsOpen = false;
     });
 
+    document.getElementById('addConfirmButton').addEventListener('click', function() {
+        //Get the selected Widget Data
+        //TODO This is not done.
+        selector = document.getElementById('selectWidgetToAdd')
+        widgetToAdd = selector.options[selector.selectedIndex].text;
+        console.log("widget to add:"+widgetToAdd);
+        console.log("selector: "+selector);
+
+        api.getWidgetTemplate(widgetToAdd, function(data) {
+            widget = new Widget(data);
+            widget.getHTML(function (data) {
+                console.log("Widget"+data);
+                document.getElementById('column2').innerHTML = data;
+            });
+
+            //Close the dialog
+            app.dialogContainer.classList.remove('dialog-container--visible');
+            app.addDialog.classList.remove('dialog--visible');
+            app.dialogIsOpen = false;
+        });
+    });
+
     /*****************************************************************************
     *
     * Methods to update/refresh the UI
