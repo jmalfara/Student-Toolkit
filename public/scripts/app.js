@@ -134,6 +134,7 @@ window.onload = function () {
     });
 
     document.getElementById('addConfirmButton').addEventListener('click', function() {
+        
         //Get the selected Widget Data
         //TODO This is not done.
         selector = document.getElementById('selectWidgetToAdd')
@@ -141,11 +142,12 @@ window.onload = function () {
         console.log("widget to add:"+widgetToAdd);
         console.log("selector: "+selector);
 
+        // Add the widget components into the dashboard in a specific grid location
         api.getWidgetTemplate(widgetToAdd, function(data) {
             widget = new Widget(data);
             widget.getHTML(function (data) {
                 console.log("Widget"+data);
-                document.getElementById('column2').innerHTML = data;
+                document.getElementById('column1').innerHTML = data;
             });
 
             //Close the dialog

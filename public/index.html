@@ -24,8 +24,11 @@
   <title>Digital Student Toolkit</title>
   <link rel="stylesheet" type="text/css" href="styles/inline.css">
 
-  <!-- TODO add manifest here -->
+  <!-- Mobile app manifest -->
   <link rel="manifest" href="/manifest.json">
+
+  <!-- Latest compiled and minified CSS for Bootstrap -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
   <!-- Add to home screen for Safari on iOS -->
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -45,21 +48,25 @@
 
 <body>
 
-
+  <!-- Widget factory API -->
   <script src="scripts/widgetManager.js" async></script>
+
   <!--Init Firebase Things-->
   <script src="https://www.gstatic.com/firebasejs/4.5.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/4.5.0/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/4.5.0/firebase-database.js"></script>
   <script src="scripts/app.js" async></script>
   <script src="https://cdn.firebase.com/libs/firebaseui/2.4.0/firebaseui.js"></script>
+
   <!--Init Jquery Things-->
   <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
   <link rel="stylesheet" href="/resources/demos/style.css">
   <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-  
-  </script>
+
+  <!-- Compiled and minified Bootstrap JavaScript -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
   <header class="header">
       <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/2.4.0/firebaseui.css" />
       <h1 class="header__title">Digital Student Toolkit</h1>
@@ -114,8 +121,8 @@
           </select>
       </div>
       <div class="dialog-buttons">
-          <button id="addConfirmButton" class="button">Add Widget</button>
-          <button id="cancelButton" class="button">Cancel</button>
+          <button id="addConfirmButton" type="button" class="btn btn-success">Add</button>
+          <button id="cancelButton" type="button" class="btn btn-primary">Cancel</button>
       </div>
   </div>
 
