@@ -187,6 +187,7 @@ window.onload = function () {
 		    	// Fetch all the available widgets for the signed in user
 				api.getUserWidgets(function (widgets) {
               
+                    // TODO: Wait till state change is saved, atm widget list is null
 	      			userWidgets = JSON.stringify(Object.values(widgets), null, 4);
 	      			console.log("The retrieved user saved widgets are: \n" + userWidgets);
     			});	
@@ -213,6 +214,9 @@ window.onload = function () {
 		for(index in widgets) {
 			select.options[select.options.length] = new Option(widgets[index], index);
 		}
+
+        // TODO: Create a global widget list used for reference to add, remove
+        // and update list of all available widgets from the database
 
       });
 
