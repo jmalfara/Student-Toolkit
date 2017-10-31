@@ -226,6 +226,11 @@ body {
   .span_3_of_3, .span_2_of_3, .span_1_of_3 { width: 100%; }
 }
 
+.component {
+  display: block;
+  width: 100%;
+}
+
 .dialog-container {
   background: rgba(0, 0, 0, 0.57);
   position: fixed;
