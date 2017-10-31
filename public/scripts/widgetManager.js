@@ -86,7 +86,8 @@ function buildButton(data){
 
 function Action(data, parentId) {
 	actionData = data;
-	var definedIds = [];
+	var definedVars = [];
+	var definedComponents = [];
 
 	this.getHTML = function(callback) {
 		var scriptHtml = " var actions = new Action("+null+");\n";
@@ -113,9 +114,11 @@ function Action(data, parentId) {
 				scriptHtml += 'actions.setValue(\''+params[0]+'\', \''+params[1]+'\');';
 			} else if (action === "DEFINE") {
 				scriptHtml += 'actions.define(\''+params[0]+'\');';
-			} else {
-				console.log("Undefined Action"+action);
-			}
+			} else if (action === "CLONE") {
+				scriptHtml += 'actions.clone(\''+params[0]+'\', \''+params[1]+'\', \''+params[2]+'\');';
+            } else {
+                    console.log("Undefined Action"+action);
+            }
 
 			scriptHtml += "\n";
 		}
@@ -130,7 +133,7 @@ function Action(data, parentId) {
 
 		if (tag === null) {
 			//It might be an id.
-			return definedIds[id];
+			return definedVars[id];
 		}
 
 		if (tag.nodeName === "INPUT") {
@@ -146,7 +149,7 @@ function Action(data, parentId) {
 
 		if (tag === null) {
 			//Treat it as a defined id.
-			definedIds[id] = value;
+			definedVars[id] = value;
 			return;
 		}
 
@@ -201,6 +204,28 @@ function Action(data, parentId) {
 
 	//Define a variable.
 	this.define = function(dest) {
-		definedIds[dest] = "";
+		definedVars[dest] = "";
 	};
+
+	//Clone Component
+	this.clone = function (src, dest, afterId) {
+		if( document.getElementById(dest) !== null && definedComponents[dest] !== null) {
+			//ID already defined.
+			console.error("Dest. already exists");
+		}
+
+		var element = document.getElementById(src);
+		var clone = element.cloneNode(true);
+
+        var timestamp = new Date();
+        var nId = timestamp.getTime()+dest;
+		//Create unique id
+		definedComponents[dest] = nId;
+		clone.id = nId;
+
+		//Use jquery to push
+		$(clone).insertAfter("#"+afterId);
+    }
+
+    //setError
 }
