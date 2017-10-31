@@ -113,11 +113,15 @@ function Api() {
                 if (action == null) {
                     continue;
                 }
-                //Change the ids in the action
+                console.log("Action String: "+action)
+
+		//Change the ids in the action
                 for (idIndex in map) {
                     oldId = map[idIndex].oldId;
                     newId = map[idIndex].newId;
-                    action = action.replace(oldId, newId);
+
+                    action = action.split(oldId).join(newId);
+		    console.log("New Action: +"+action);
                 }
                 data.components[componentIndex].action = action;
             }
