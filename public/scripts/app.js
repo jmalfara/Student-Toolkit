@@ -61,7 +61,7 @@ function Api() {
         widgets.once('value').then(function (snapshot) {
             callback(snapshot.val());
         })
-    }
+    };
 
     this.getUserWidgets = function(callback) {
         var unsubscribe = firebase.auth().onAuthStateChanged(function (currentUser) {
@@ -93,7 +93,35 @@ function Api() {
     this.getWidgetTemplate = function(widgetName, callback) {
         var widgets = database.ref('widgetTemplates/'+widgetName);
         widgets.once('value').then(function (snapshot) {
-            callback(snapshot.val());
+            var map = [];
+            var data = snapshot.val();
+            for (componentIndex in snapshot.val().components) {
+                var id = data.components[componentIndex].id;
+                var timestamp = new Date();
+                var nId = timestamp.getTime()+id;
+
+                map[map.length] = { oldId : id, newId : nId };
+
+                //Change the ID of the component;
+                data.components[componentIndex].id = nId;
+            }
+
+            //Reiterate over components for actions. Rename all actions
+            console.log(map);
+            for (componentIndex in data.components) {
+                var action = data.components[componentIndex].action;
+                if (action == null) {
+                    continue;
+                }
+                //Change the ids in the action
+                for (idIndex in map) {
+                    oldId = map[idIndex].oldId;
+                    newId = map[idIndex].newId;
+                    action = action.replace(oldId, newId);
+                }
+                data.components[componentIndex].action = action;
+            }
+            callback(data);
         })
     }
 }
