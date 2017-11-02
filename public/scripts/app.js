@@ -115,7 +115,7 @@ function Api() {
                 }
                 console.log("Action String: "+action)
 
-		//Change the ids in the action
+		    //Change the ids in the action
                 for (idIndex in map) {
                     oldId = map[idIndex].oldId;
                     newId = map[idIndex].newId;
@@ -180,6 +180,8 @@ window.onload = function () {
             widget.getHTML(function (data) {
                 console.log("Widget"+data);
                 document.getElementById('column1').innerHTML = data;
+                document.getElementById('column2').innerHTML = data;
+                document.getElementById('column3').innerHTML = data;
             });
 
             //Close the dialog
@@ -197,6 +199,9 @@ window.onload = function () {
 
     //Main Method run after startup run everything in here.
     app.main = function(data) {
+
+        // List to keep track of all the widgets (to remove, add, list info)
+        var widgetList = [];
 
     	// User authentication process
 		api.isSignedIn(function (signedIn) {
@@ -249,10 +254,10 @@ window.onload = function () {
 			select.options[select.options.length] = new Option(widgets[index], index);
 		}
 
-        // TODO: Create a global widget list used for reference to add, remove
-        // and update list of all available widgets from the database
+        widgetList.push(str);
+        console.log(" Widget List: \n" + widgetList);
 
-      });
+      });  
 
     };
     app.main();
