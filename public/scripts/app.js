@@ -180,8 +180,6 @@ window.onload = function () {
             widget.getHTML(function (data) {
                 console.log("Widget"+data);
                 document.getElementById('column1').innerHTML = data;
-                document.getElementById('column2').innerHTML = data;
-                document.getElementById('column3').innerHTML = data;
             });
 
             //Close the dialog
