@@ -216,10 +216,24 @@ window.onload = function () {
     ****************************************************************************/
     app.addWidgetToDashboard = function(widget) {
         widget.getHTML(function (data) {
- 		//Add the widget to the dashboard.
-		document.getElementById('column1').innerHTML = data;
+
+ 		// Create a inner div as a container for the entire widget 
+ 		var innerDiv = document.createElement('div');
+ 		innerDiv.className = 'col';
+
+ 		// Add unique ID for each widget container
+ 		var uniqid = Date.now();
+ 		innerDiv.id = uniqid;
+
+ 		// Dump widget template data onto the div container
+ 		innerDiv.setAttribute("style","width:32.26%");
+ 		innerDiv.innerHTML = data;
+
+ 		// Add the newly created div into the dashboard container
+ 		document.getElementById("gridContainer").appendChild(innerDiv);
         });
-	//Add the widget to the widget list.
+
+	// Add the widget to the widget list.
 	app.widgets[widget.widgetData.id] = widget;
     }
 
@@ -269,8 +283,9 @@ window.onload = function () {
 		    		// Fetch all the available widgets for the signed in user
 				showLoader();
 				api.getUserWidgets(function (widgets) {
-					//Implement this.
-					console.log("Got widgets: "+widgets);
+					
+					// Implement this.
+					console.log("Got widgets: "+ widgets);
 					hideLoader();
 				});
 			}
