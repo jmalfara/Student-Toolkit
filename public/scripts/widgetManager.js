@@ -228,10 +228,11 @@ function Action(data, parentId) {
 		//Create unique id
 		definedComponents[dest] = nId;
 		clone.id = nId;
+
 		//Chage the data ID
-		//data = clone.getAttribute("data");
-		//data.id = nId;
-		//clone.setAttribute("data");
+		data = JSON.parse(clone.getAttribute("data"));
+		data.id = clone.id;
+		clone.setAttribute("data", JSON.stringify(data));
 
 		//Use jquery to push
 		$(clone).insertAfter("#"+afterId);
