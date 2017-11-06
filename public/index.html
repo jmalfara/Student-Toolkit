@@ -76,27 +76,13 @@
 
   <!-- Dashboard -->
   <main class="main">
+
+    <!-- Outer container that holds all the widgets -->
   	<div class="section group" id="gridContainer">
 
-      <!-- WIDGET # 1 -->
-		<div align="center" id="column1" class="col span_1_of_3">
-      <!--
-      <iframe src="https://open.spotify.com/embed?uri=spotify:user:filtr:playlist:0JFatPoPq82gNcPa4esOzj" width="300" height="293" frameborder="0" allowtransparency="true"></iframe>
-      -->
-		</div>
+      <!-- addWidgetToDashboard will create individual divs inside this container dynamically -->
 
-		<!-- WIDGET # 2 -->
-    <div align="center" id="column2" class="col span_1_of_3">
-
-    </div>
-
-    <!-- WIDGET # 3 -->
-		<div align="center" id="column3" class="col span_1_of_3">
-      <!--
-      <script type="text/javascript" async src="https://www.theweather.net/wid_loader/9c2aa85876527769b5059ee8771b284b"></script>
-      -->
-		</div>
-	</div>
+	 </div>
   </main>
 
   <div class="dialog-container"></div>
@@ -112,12 +98,7 @@
           <!-- Fetch the widget names from the db dynamically to add -->
           <select id="selectWidgetToAdd">
 
-          <!-- These were place holder values, the javascript dynamically loads the values from db
-          <option value="1">Notes</option>
-          <option value="2">Scheduler</option>
-          <option value="3">Maps</option>
-          <option value="4">GPA Calculator</option>
-          -->
+          <!-- getAvailableWidgets dynamically parses widget name and adds into DOM as options -->
 
           </select>
       </div>
