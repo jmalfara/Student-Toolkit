@@ -1,17 +1,21 @@
 function Widget(data){
-	var widgetData = data;
+    this.widgetData = data;
 
-    this.getHTML = async function(callback){
-		var widget = "<div class='widget'>";
-		console.log(widgetData);
-		for (componentIndex in widgetData.components) {
-			component = new Component(widgetData.components[componentIndex]);
+    this.getHTML = async function(callback) {
+		var widget = "<div class='widget' id="+'\''+this.widgetData.id+'\''+">";
+		for (componentIndex in this.widgetData.components) {
+			component = new Component(this.widgetData.components[componentIndex]);
 			widget += await component.getHTML();
 			console.log("Done await "+data);
 		}
 		widget += "</div>";
 		callback(widget);
-	}
+    }
+
+    this.getUpdatedData = async function(callback) {
+		//TODO Dynamically build the widget from the elements on screen from widget id *
+		callback(widgetData);
+    }
 }
 
 function Component(data){
@@ -43,16 +47,16 @@ function Component(data){
 //Hidden
 function buildHidden(data) {
 	return new Promise(function (resolve) {
-        var component = "<input type=\"hidden\" id=\""+data.id+"\" value=\""+data.value+"\">";
-        console.log("Component hidden: "+component);
+        	var component = "<input data="+'\''+JSON.stringify(data)+'\''+" type=\"hidden\" id=\""+data.id+"\" value=\""+data.value+"\">";
+	        console.log("Component hidden: "+component);
 		resolve(component);
-  })
+  	});
 }
 
 //Textbox
 function buildTextbox(data) {
 	return new Promise(function (resolve) {
-        var component = "<textarea class='component' id=\""+data.id+"\" placeholder=\""+data.hint+"\">"+data.value.trim()+"</textarea>";
+        var component = "<textarea data="+'\''+JSON.stringify(data)+'\''+" class='component' id=\""+data.id+"\" placeholder=\""+data.hint+"\">"+data.value.trim()+"</textarea>";
         console.log("Component end: "+component);
         resolve(component);
     });
@@ -61,26 +65,25 @@ function buildTextbox(data) {
 //numberRow
 function buildNumberRow(data){
 	return new Promise(function (resolve) {
-        var component = "<input class='component' type=\"number\" id=\""+data.id+"\" placeholder=\""+data.hint+"\">";
-        console.log("Component buildNumberRow: "+component);
-        resolve(component);
-    });
+        	var component = "<input data="+'\''+JSON.stringify(data)+'\''+" class='component' type=\"number\" id=\""+data.id+"\" placeholder=\""+data.hint+"\">";
+        	console.log("Component buildNumberRow: "+component);
+        	resolve(component);
+	});
 }
 
 //numberRow
 function buildButton(data){
 	return new Promise(function (resolve) {
 		if (data.action !== null) {
-            action = new Action(data.action);
-            var actionScript = action.getHTML(function (script) {
-                console.log("Component buildButton: " + component);
-                resolve("<button class='component' id=\"" + data.id + "\" onclick=\"" + script + "\">" + data.value + "</button>");
-            });
-        } else {
-            resolve("<button class='component' id=\"" + data.id + "\">" + data.value + "</button>");
+			action = new Action(data.action);
+            		var actionScript = action.getHTML(function (script) {
+                		console.log("Component buildButton: " + component);
+                		resolve("<button data="+'\''+JSON.stringify(data)+'\''+" class='component' id=\"" + data.id + "\" onclick=\"" + script + "\">" + data.value + "</button>");
+            		});
+        	} else {
+            		resolve("<button data="+'\''+JSON.stringify(data)+'\''+" class='component' id=\"" + data.id + "\">" + data.value + "</button>");
 		}
-    });
-
+	});
 }
 
 
@@ -90,6 +93,7 @@ function Action(data, parentId) {
 	var definedComponents = [];
 
 	this.getHTML = function(callback) {
+		//Attach the raw action data. This is used for saving widgets that have manually added components. This is not the best way but will be fine for now
 		var scriptHtml = " var actions = new Action("+null+");\n";
 		var actions = actionData.split(" ");
 
@@ -116,9 +120,11 @@ function Action(data, parentId) {
 				scriptHtml += 'actions.define(\''+params[0]+'\');';
 			} else if (action === "CLONE") {
 				scriptHtml += 'actions.clone(\''+params[0]+'\', \''+params[1]+'\', \''+params[2]+'\');';
-            } else {
-                    console.log("Undefined Action"+action);
-            }
+            		} else if (action === "EXEC") {
+				scriptHtml += params[0]+";";
+			} else {
+                    		console.log("Undefined Action"+action);
+			}
 
 			scriptHtml += "\n";
 		}
@@ -217,15 +223,19 @@ function Action(data, parentId) {
 		var element = document.getElementById(src);
 		var clone = element.cloneNode(true);
 
-        var timestamp = new Date();
-        var nId = timestamp.getTime()+dest;
+        	var timestamp = new Date();
+        	var nId = timestamp.getTime()+dest;
 		//Create unique id
 		definedComponents[dest] = nId;
 		clone.id = nId;
+		//Chage the data ID
+		//data = clone.getAttribute("data");
+		//data.id = nId;
+		//clone.setAttribute("data");
 
 		//Use jquery to push
 		$(clone).insertAfter("#"+afterId);
-    }
+	};
 
     //setError
 }
