@@ -1,10 +1,10 @@
 function Widget(data){
-    this.widgetData = data;
+    var widgetData = data;
 
     this.getHTML = async function(callback) {
-		var widget = "<div class='widget' id="+'\''+this.widgetData.id+'\''+">";
-		for (componentIndex in this.widgetData.components) {
-			component = new Component(this.widgetData.components[componentIndex]);
+		var widget = "<div class='widget' id="+'\''+widgetData.id+'\''+">";
+		for (componentIndex in widgetData.components) {
+			component = new Component(widgetData.components[componentIndex], widgetData.id);
 			widget += await component.getHTML();
 			console.log("Done await "+data);
 		}
@@ -13,13 +13,15 @@ function Widget(data){
     }
 
     this.getUpdatedData = async function(callback) {
+    	console.log("Get Updated Widget Data");
 		//TODO Dynamically build the widget from the elements on screen from widget id *
 		callback(widgetData);
     }
 }
 
-function Component(data){
+function Component(data, id){
 	var componentData = data;
+	var parentId = id;
 	console.log("Component data type: "+componentData.type);
 
 	this.getHTML = function(callback) {
@@ -32,7 +34,7 @@ function Component(data){
             } else if (componentData.type === "numberRow"){
                 promise = buildNumberRow(componentData);
             } else if (componentData.type === "button") {
-                promise = buildButton(componentData);
+                promise = buildButton(componentData, parentId);
             } else if (componentData.type === "hidden") {
                 promise = buildHidden(componentData);
             }
@@ -72,10 +74,11 @@ function buildNumberRow(data){
 }
 
 //numberRow
-function buildButton(data){
+function buildButton(data, widgetId){
 	return new Promise(function (resolve) {
-		if (data.action !== null) {
-			action = new Action(data.action);
+		console.log(data);
+		if (data.action !== null && data.action.length !== 0) {
+			action = new Action(data.action, widgetId);
             		var actionScript = action.getHTML(function (script) {
                 		console.log("Component buildButton: " + component);
                 		resolve("<button data="+'\''+JSON.stringify(data)+'\''+" class='component' id=\"" + data.id + "\" onclick=\"" + script + "\">" + data.value + "</button>");
@@ -87,10 +90,11 @@ function buildButton(data){
 }
 
 
-function Action(data, parentId) {
+var definedVars = [];
+var definedComponents = [];
+function Action(data, parent) {
 	actionData = data;
-	var definedVars = [];
-	var definedComponents = [];
+	var parentId = parent;
 
 	this.getHTML = function(callback) {
 		//Attach the raw action data. This is used for saving widgets that have manually added components. This is not the best way but will be fine for now
@@ -120,10 +124,10 @@ function Action(data, parentId) {
 				scriptHtml += 'actions.define(\''+params[0]+'\');';
 			} else if (action === "CLONE") {
 				scriptHtml += 'actions.clone(\''+params[0]+'\', \''+params[1]+'\', \''+params[2]+'\');';
-            		} else if (action === "EXEC") {
-				scriptHtml += params[0]+";";
+			} else if (action === "PUSH") {
+				scriptHtml += "pushWidget('"+parentId+"');";
 			} else {
-                    		console.log("Undefined Action"+action);
+				console.log("Undefined Action"+action);
 			}
 
 			scriptHtml += "\n";
@@ -215,9 +219,12 @@ function Action(data, parentId) {
 
 	//Clone Component
 	this.clone = function (src, dest, afterId) {
-		if( document.getElementById(dest) !== null && definedComponents[dest] !== null) {
+		console.log("CLONE "+ definedComponents[dest]);
+		if( definedComponents[dest] !== undefined ) {
+			//&& document.getElementById(dest) !== undefined
 			//ID already defined.
 			console.error("Dest. already exists");
+			return;
 		}
 
 		var element = document.getElementById(src);

@@ -1,0 +1,191 @@
+<!--
+ Copyright 2016 Google Inc.
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Student Toolkit</title>
+    <link rel="stylesheet" type="text/css" href="styles/inline.css">
+
+    <!-- Mobile app manifest -->
+    <link rel="manifest" href="/manifest.json">
+
+    <!-- Latest compiled and minified CSS for Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <!-- Add to home screen for Safari on iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Digital Student Toolkit">
+    <link rel="apple-touch-icon" href="images/icons/mstile-150x150.png">
+
+    <!-- Android App home screen (Different sizes) -->
+    <meta name="Digital Student Toolkit" content="&nbsp;"/>
+    <meta name="msapplication-TileColor" content="#FFFFFF" />
+    <meta name="msapplication-TileImage" content="images/icons/mstile-144x144.png" />
+    <meta name="msapplication-square70x70logo" content="images/icons/mstile-70x70.png" />
+    <meta name="msapplication-square150x150logo" content="images/icons/mstile-150x150.png" />
+    <meta name="msapplication-wide310x150logo" content="images/icons/mstile-310x150.png" />
+    <meta name="msapplication-square310x310logo" content="images/icons/mstile-310x310.png" />
+</head>
+
+<body>
+
+<!-- APIs -->
+<script src="scripts/api.js" async></script>
+<script src="scripts/widgetManager.js" async></script>
+
+<!--Init Firebase Things-->
+<script src="https://www.gstatic.com/firebasejs/4.5.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/4.5.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/4.5.0/firebase-database.js"></script>
+<script src="https://cdn.firebase.com/libs/firebaseui/2.4.0/firebaseui.js"></script>
+
+<!--Init Jquery Things-->
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+<!-- Compiled and minified Bootstrap JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+<!-- bootbox code -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.4.0/bootbox.min.js"></script>
+
+<header class="header">
+    <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/2.4.0/firebaseui.css" />
+    <h1 class="header__title">Digital Student Toolkit Creation Portal</h1>
+</header>
+
+<!-- Dashboard -->
+<main class="main">
+    <div id="container">
+        <!-- Outer container that holds all the widgets -->
+        <div id="widget" style="display: inline-grid;">
+            <!-- addWidgetToDashboard will create individual divs inside this container dynamically -->
+            <input type="text" id="widgetName" placeholder="Widget Name">
+            <input type="button" id="addComponent" value="Add Component">
+        </div>
+
+        <div style="display: inline-grid">
+            <input type="button" id="preview" value="Preview Component">
+            <div id="pre-widget"></div>
+        </div>
+    </div>
+</main>
+
+<div class="dialog-container"></div>
+
+<div class="dialog" id="loginDialog">
+    <div id="firebaseui-auth-container"></div>
+</div>
+
+<!--&lt;!&ndash;Loading Spinner&ndash;&gt;-->
+<!--<div class="loader">-->
+    <!--<svg viewBox="0 0 32 32" width="32" height="32">-->
+        <!--<circle id="spinner" cx="16" cy="16" r="14" fill="none"></circle>-->
+    <!--</svg>-->
+<!--</div>-->
+
+<!-- Moved at the bottom so the DOM loads before running script functions -->
+<!--<script src="scripts/app.js" async></script>-->
+<script>
+    var componentList = [];
+
+    document.getElementById("addComponent").addEventListener('click', function() {
+        var type = document.createElement("INPUT");
+        type.setAttribute("class", "component");
+        type.setAttribute("type", "text");
+        type.setAttribute("placeholder", "type");
+
+        var id = document.createElement("INPUT");
+        id.setAttribute("class", "component");
+        id.setAttribute("type", "text");
+        id.setAttribute("placeholder", "id");
+
+        var hint = document.createElement("INPUT");
+        hint.setAttribute("class", "component");
+        hint.setAttribute("type", "text");
+        hint.setAttribute("placeholder", "hint");
+
+        var value = document.createElement("INPUT");
+        value.setAttribute("class", "component");
+        value.setAttribute("type", "text");
+        value.setAttribute("placeholder", "value");
+
+        var action = document.createElement("INPUT");
+        action.setAttribute("class", "component");
+        action.setAttribute("type", "text");
+        action.setAttribute("placeholder", "action");
+
+        var componentElement = document.createElement("DIV")
+        componentElement.setAttribute("class", "col");
+
+        $(componentElement).append(type);
+        $(componentElement).append(id);
+        $(componentElement).append(hint);
+        $(componentElement).append(value);
+        $(componentElement).append(action);
+
+        //Add the comp to the list
+        var component = [];
+        component["type"] = type;
+        component["id"] = id;
+        component["hint"] = hint;
+        component["value"] = value;
+        component["action"] = action;
+        componentList[componentList.length] = component;
+
+        $(componentElement).insertAfter("#addComponent");
+    });
+
+    document.getElementById("preview").addEventListener('click', function() {
+        var object = {
+            cellLocation : 1,
+            type : document.getElementById("widgetName").value,
+            components : []
+        };
+
+        for (var componentIndex in componentList) {
+            var component = componentList[componentIndex];
+            console.log(component["type"].value + " : " + component["hint"].value);
+            object.components[componentIndex] = {
+                hint: component["hint"].value,
+                id: component["id"].value,
+                type: component["type"].value,
+                value: component["value"].value,
+                action: component["action"].value
+            };
+        }
+
+        console.log(object);
+        var widget = new Widget(object);
+        widget.getHTML(function (data) {
+            console.log(data + " : ")
+            var previewSpot = document.getElementById("pre-widget");
+            previewSpot.innerHTML = data;
+        })
+    });
+
+</script>
+
+
+</body>
+</html>
