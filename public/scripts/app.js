@@ -119,11 +119,11 @@
 		//Turn off the loader.
 		hideLoader();
 
-	    	// User authentication process
+		// User authentication process
 		api.isSignedIn(function (signedIn) {
-    			console.log(signedIn);
+				console.log(signedIn);
 
-    			if (!signedIn) {
+			if (!signedIn) {
 				//Force Login. make the dialog visible;
 				app.dialogContainer.classList.add('dialog-container--visible');
 				app.loginDialog.classList.add('dialog--visible');
@@ -132,28 +132,35 @@
 
 				// Prompt the login screen
 				api.startLoginDialog(function () {
-		    			console.log("Login successfully complete!");
+						console.log("Login successfully complete!");
 
-			    		//Make the dialog invisible
-			    		app.dialogContainer.classList.remove('dialog-container--visible');
-			    		app.loginDialog.classList.remove('dialog--visible');
-		    			app.dialogIsOpen = false;
+						//Make the dialog invisible
+						app.dialogContainer.classList.remove('dialog-container--visible');
+						app.loginDialog.classList.remove('dialog--visible');
+						app.dialogIsOpen = false;
 
-			    		// Fetch all the available widgets for the signed in user
+						// Fetch all the available widgets for the signed in user
 					showLoader();
 					api.getUserWidgets(function (widgets) {
-						//Implement this.
-						console.log("Got widgets: "+widgets);
-						hideLoader();
-    					});
+							for (widgetIndex in widgets) {
+								var widgetData = widgets[widgetIndex];
+								console.log(widgetData);
+								var  widget = new Widget(widgetData);
+								app.addWidgetToDashboard(widget, widgetData.id);
+							}
+							hideLoader();
+						});
 				});
 			} else {
-		    		// Fetch all the available widgets for the signed in user
+					// Fetch all the available widgets for the signed in user
 				showLoader();
 				api.getUserWidgets(function (widgets) {
-					
-					// Implement this.
-					console.log("Got widgets: "+ widgets);
+                    for (widgetIndex in widgets) {
+                        var widgetData = widgets[widgetIndex];
+                        console.log(widgetData);
+                        var  widget = new Widget(widgetData);
+                        app.addWidgetToDashboard(widget, widgetData.id);
+                    }
 					hideLoader();
 				});
 			}

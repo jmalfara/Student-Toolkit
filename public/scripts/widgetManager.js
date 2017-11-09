@@ -143,6 +143,7 @@ function Action(data, parent) {
 
 		if (tag === null) {
 			//It might be an id.
+			console.log("VARIABLE: "+definedVars[id]);
 			return definedVars[id];
 		}
 
@@ -214,14 +215,12 @@ function Action(data, parent) {
 
 	//Define a variable.
 	this.define = function(dest) {
-		definedVars[dest] = "";
+		definedVars[dest] = 0;
 	};
 
 	//Clone Component
 	this.clone = function (src, dest, afterId) {
-		console.log("CLONE "+ definedComponents[dest]);
-		if( definedComponents[dest] !== undefined ) {
-			//&& document.getElementById(dest) !== undefined
+		if( document.getElementById(dest) !== null ) {
 			//ID already defined.
 			console.error("Dest. already exists");
 			return;
@@ -229,14 +228,10 @@ function Action(data, parent) {
 
 		var element = document.getElementById(src);
 		var clone = element.cloneNode(true);
+		//change id
+		clone.id = dest;
 
-        	var timestamp = new Date();
-        	var nId = timestamp.getTime()+dest;
-		//Create unique id
-		definedComponents[dest] = nId;
-		clone.id = nId;
-
-		//Chage the data ID
+		//Change the data ID
 		data = JSON.parse(clone.getAttribute("data"));
 		data.id = clone.id;
 		clone.setAttribute("data", JSON.stringify(data));
