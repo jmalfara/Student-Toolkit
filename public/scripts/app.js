@@ -51,7 +51,7 @@
         });
     });
 
-    	function showLoader() {
+	function showLoader() {
 		//Turn off the loader.
 		if (!app.isLoading) {
 			app.spinner.setAttribute('visible', true);
@@ -60,7 +60,7 @@
       		}
     	}
 
-    	function hideLoader() {
+	function hideLoader() {
 		//Turn off the loader.
 		if (app.isLoading) {
 			app.spinner.setAttribute('hidden', true);

@@ -67,7 +67,7 @@ function buildTextbox(data) {
 //numberRow
 function buildNumberRow(data){
 	return new Promise(function (resolve) {
-        	var component = "<input data="+'\''+JSON.stringify(data)+'\''+" class='component' type=\"number\" id=\""+data.id+"\" placeholder=\""+data.hint+"\">";
+        	var component = "<input data="+'\''+JSON.stringify(data)+'\''+" class='component' type=\"number\" id=\""+data.id+"\" placeholder=\""+data.hint+"\" value=\""+data.value+"\">";
         	console.log("Component buildNumberRow: "+component);
         	resolve(component);
 	});
