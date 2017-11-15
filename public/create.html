@@ -121,10 +121,23 @@
     var componentList = [];
 
     document.getElementById("addComponent").addEventListener('click', function() {
-        var type = document.createElement("INPUT");
-        type.setAttribute("class", "component");
-        type.setAttribute("type", "text");
-        type.setAttribute("placeholder", "type");
+        var componentElement = document.createElement("DIV")
+        componentElement.setAttribute("class", "col");
+
+	//Create the selector dropdown
+	var typeRemoveHolder = document.createElement("DIV")
+		//Create the remove widget button to remove this widget.
+		var removeButton = document.createElement("BUTTON");
+		removeButton.innerHTML = "Remove Component";	
+		removeButton.setAttribute("class", "component");
+
+		var type = document.createElement("SELECT");
+        	type.setAttribute("name", "type");
+		addComponentOptions(type);
+		type.setAttribute("class", "component");
+	$(typeRemoveHolder).append(removeButton);
+	$(typeRemoveHolder).append(type);
+	$(componentElement).append(typeRemoveHolder);
 
         var id = document.createElement("INPUT");
         id.setAttribute("class", "component");
@@ -146,10 +159,6 @@
         action.setAttribute("type", "text");
         action.setAttribute("placeholder", "action");
 
-        var componentElement = document.createElement("DIV")
-        componentElement.setAttribute("class", "col");
-
-        $(componentElement).append(type);
         $(componentElement).append(id);
         $(componentElement).append(hint);
         $(componentElement).append(value);
@@ -163,8 +172,16 @@
         component["value"] = value;
         component["action"] = action;
         componentList[componentList.length] = component;
+	
+	//add the compnent index to the data in the button so we can remove the component.
+	removeButton.addEventListener('click', function() {
+		var componentIndex = componentList.indexOf(component);
+		componentList.splice(componentIndex, 1);
+		console.log("Removed "+componentIndex);
+		$(componentElement).remove();
+	});       	
 
-        $(componentElement).insertAfter("#addComponent");
+	$(componentElement).insertAfter("#addComponent");
     });
 
     document.getElementById("preview").addEventListener('click', function() {
@@ -197,6 +214,28 @@
         })
     });
 
+    function addComponentOptions(type) {
+	var option = document.createElement("OPTION");
+	option.setAttribute("value", "textBox");
+	option.innerHTML = "Text Box";
+	type.add(option);
+
+	option = document.createElement("OPTION");
+	option.setAttribute("value", "textRow");
+	option.innerHTML = "Text Row";
+	type.add(option);
+
+	option = document.createElement("OPTION");
+	option.setAttribute("value", "numberRow");
+	option.innerHTML = "Number Row";
+	type.add(option);
+
+	option = document.createElement("OPTION");
+	option.setAttribute("value", "button");
+	option.innerHTML = "Button";
+	type.add(option);
+	//All components are above.
+    }
 </script>
 
 
