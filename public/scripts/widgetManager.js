@@ -53,10 +53,12 @@ function Component(data, id){
             // var componentHTML = "<div> Component "+componentData.type+" </div>";
             //Do stuff here to build the componenet
             var promise;
-            if (componentData.type === "textbox"){
-                promise = buildTextbox(componentData);
+	    if (componentData.type === "textRow") {
+		promise = buildTextRow(componentData, parentId);
+	    } else if (componentData.type === "textBox"){
+                promise = buildTextbox(componentData, parentId);
             } else if (componentData.type === "numberRow"){
-                promise = buildNumberRow(componentData);
+                promise = buildNumberRow(componentData, parentId);
             } else if (componentData.type === "button") {
                 promise = buildButton(componentData, parentId);
             } else if (componentData.type === "hidden") {
@@ -79,19 +81,64 @@ function buildHidden(data) {
   	});
 }
 
-//Textbox
-function buildTextbox(data) {
+//textRow
+function buildTextRow(data, widgetId) {
 	return new Promise(function (resolve) {
-        var component = "<textarea data="+'\''+JSON.stringify(data)+'\''+" class='component' id=\""+data.id+"\" placeholder=\""+data.hint+"\">"+data.value.trim()+"</textarea>";
+        var component = "<input "
+	component += " data="+'\''+JSON.stringify(data)+'\'';
+	component += " class='component' id=\""+data.id+"\"";
+	component += " placeholder=\""+data.hint+"\"";
+	if (data.action !== null && data.action.length !== 0) {
+    		var action = new Action(data.action, widgetId);
+		var actionScript = action.getHTML(function (script) {
+               		console.log("Component buildButton: " + component);
+               		component += " oninput=\"" + script + "\"";
+			component += " value=\""+data.value.trim()+"\">";
+      			resolve(component);
+		});
+	}
+	component += " value=\""+data.value.trim()+"\">";
+        console.log("Component end: "+component);
+        resolve(component);
+    });
+}
+
+//Textbox
+function buildTextbox(data, widgetId) {
+	return new Promise(function (resolve) {
+	if (data.action !== null && data.action.length !== 0) {
+    		var action = new Action(data.action, widgetId);
+		var actionScript = action.getHTML(function (script) {
+	    		var component = "<textarea data="+'\''+JSON.stringify(data)+'\''+" oninput=\""+script+"\" class='component' id=\""+data.id+"\" placeholder=\""+data.hint+"\">"+data.value.trim()+"</textarea>";
+      			resolve(component);
+		});
+	} else {
+	        var component = "<textarea data="+'\''+JSON.stringify(data)+'\''+" class='component' id=\""+data.id+"\" placeholder=\""+data.hint+"\">"+data.value.trim()+"</textarea>";
+	}
         console.log("Component end: "+component);
         resolve(component);
     });
 }
 
 //numberRow
-function buildNumberRow(data){
+function buildNumberRow(data, widgetId){
 	return new Promise(function (resolve) {
-        	var component = "<input data="+'\''+JSON.stringify(data)+'\''+" class='component' type=\"number\" id=\""+data.id+"\" placeholder=\""+data.hint+"\">";
+        	var component = "<input "
+		component += " data="+'\''+JSON.stringify(data)+'\'';
+		component += " class='component'";
+		component += " type=\"number\"";
+		component += " id=\""+data.id+"\"";
+		component += " placeholder=\""+data.hint+"\"";
+		if (data.action !== null && data.action.length !== 0) {
+			var action = new Action(data.action, widgetId);
+    			var actionScript = action.getHTML(function (script) {
+       	        		component += " oninput=\"" + script + "\"";
+				component += " value=\""+data.value.trim()+"\">";
+	      			resolve(component);
+			});
+		}
+
+		component += " value=\""+data.value.trim()+"\">";
         	console.log("Component buildNumberRow: "+component);
         	resolve(component);
 	});
@@ -105,10 +152,10 @@ function buildButton(data, widgetId){
 			action = new Action(data.action, widgetId);
             		var actionScript = action.getHTML(function (script) {
                 		console.log("Component buildButton: " + component);
-                		resolve("<button data="+'\''+JSON.stringify(data)+'\''+" class='component' id=\"" + data.id + "\" onclick=\"" + script + "\">" + data.value + "</button>");
+                		resolve("<input type='button' data="+'\''+JSON.stringify(data)+'\''+" value = \""+data.value+"\" class='component' id=\"" + data.id + "\" onclick=\"" + script + "\">");
             		});
         	} else {
-            		resolve("<button data="+'\''+JSON.stringify(data)+'\''+" class='component' id=\"" + data.id + "\">" + data.value + "</button>");
+                	resolve("<input type='button' data="+'\''+JSON.stringify(data)+'\''+" value = \""+data.value+"\" class='component' id=\"" + data.id + "\">");
 		}
 	});
 }
@@ -134,7 +181,9 @@ function Action(data, parent) {
 			}
 			console.log("params: "+params);
 
-			if (action === "ADD") {
+			if (action === "CONCAT") {
+				scriptHtml += 'actions.concat(\''+params[0]+'\', \''+params[1]+'\', \''+params[2]+'\');';
+			} else if (action === "ADD") {
 				scriptHtml += 'actions.add(\''+params[0]+'\', \''+params[1]+'\', \''+params[2]+'\');';
 			} else if (action === "SUBTRACT") {
 				scriptHtml += 'actions.subtract(\''+params[0]+'\', \''+params[1]+'\', \''+params[2]+'\');';
@@ -171,16 +220,12 @@ function Action(data, parent) {
 			return definedVars[id];
 		}
 
-		if (tag.nodeName === "INPUT") {
-			return document.getElementById(id).value;
-		} else {
-			//Attempt to get the value from the innerHTML
-			return document.getElementById(id).innerHTML;
-		}
+		return document.getElementById(id).value;
 	};
 
 	this.setValueFromId = function(id, value) {
 		var tag = document.getElementById(id);
+		console.log("Setting: "+value);
 
 		if (tag === null) {
 			//Treat it as a defined id.
@@ -188,19 +233,17 @@ function Action(data, parent) {
 			return;
 		}
 
-		if (tag.nodeName === "INPUT") {
-			document.getElementById(id).value = value;
-		} else {
-			//Attempt to get the value from the innerHTML
-			document.getElementById(id).innerHTML = value;
-		}
+		document.getElementById(id).value = value;
 	};
 
 	//ADD
 	this.add = function(src1, src2, dest) {
 		var element1 = this.getValueFromID(src1);
 		var element2 = this.getValueFromID(src2);
-
+		if (isNaN(parseFloat(element1)) || isNaN(parseFloat(element2))) {
+			alert("NaN");
+			return;
+		}
 		var output = parseFloat(element1) + parseFloat(element2);
 		this.setValueFromId(dest, output);
 	};
@@ -209,6 +252,10 @@ function Action(data, parent) {
 	this.subtract = function(src1, src2, dest) {
 		var element1 = this.getValueFromID(src1);
 		var element2 = this.getValueFromID(src2);
+		if (isNaN(parseFloat(element1)) || isNaN(parseFloat(element2))) {
+			alert("NaN");
+			return;
+		}
 
 		var output = parseFloat(element1) - parseFloat(element2);
 		this.setValueFromId(dest, output);
@@ -218,6 +265,10 @@ function Action(data, parent) {
 	this.multiply = function(src1, src2, dest) {
 		var element1 = this.getValueFromID(src1);
 		var element2 = this.getValueFromID(src2);
+		if (isNaN(parseFloat(element1)) || isNaN(parseFloat(element2))) {
+			alert("NaN");
+			return;
+		}
 
 		var output = parseFloat(element1) * parseFloat(element2);
 		this.setValueFromId(dest, output);
@@ -227,10 +278,23 @@ function Action(data, parent) {
 	this.divide = function(num, denom, dest) {
 		var element1 = this.getValueFromID(num);
 		var element2 = this.getValueFromID(denom);
+			if (isNaN(parseFloat(element1)) || isNaN(parseFloat(element2))) {
+			alert("NaN");
+			return;
+		}
 
 		var output = parseFloat(element1) / parseFloat(element2);
 		this.setValueFromId(dest, output);
 	};
+
+	//Concat
+	this.concat = function(src1, src2, dest) {
+		var element1 = this.getValueFromID(src1);
+		var element2 = this.getValueFromID(src2);
+
+		var output = element1 + element2;
+		this.setValueFromId(dest, output);
+	}
 
 	//SETVALUE
 	this.setValue = function(value, dest) {
@@ -239,14 +303,12 @@ function Action(data, parent) {
 
 	//Define a variable.
 	this.define = function(dest) {
-		definedVars[dest] = "";
+		definedVars[dest] = 0;
 	};
 
 	//Clone Component
 	this.clone = function (src, dest, afterId) {
-		console.log("CLONE "+ definedComponents[dest]);
-		if( definedComponents[dest] !== undefined ) {
-			//&& document.getElementById(dest) !== undefined
+		if( document.getElementById(dest) !== null ) {
 			//ID already defined.
 			console.error("Dest. already exists");
 			return;
@@ -254,14 +316,10 @@ function Action(data, parent) {
 
 		var element = document.getElementById(src);
 		var clone = element.cloneNode(true);
+		//change id
+		clone.id = dest;
 
-        	var timestamp = new Date();
-        	var nId = timestamp.getTime()+dest;
-		//Create unique id
-		definedComponents[dest] = nId;
-		clone.id = nId;
-
-		//Chage the data ID
+		//Change the data ID
 		data = JSON.parse(clone.getAttribute("data"));
 		data.id = clone.id;
 		clone.setAttribute("data", JSON.stringify(data));

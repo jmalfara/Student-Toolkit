@@ -80,7 +80,9 @@ function Api() {
         var unsubscribe = firebase.auth().onAuthStateChanged(function (currentUser) {
             var key = database.ref('userWidgets/'+currentUser.uid+'/').push();
             key.set(widgetData, function (error) {
-                callback(error);
+                if (error !== null) {
+                    callback(error);
+                }
             });
             unsubscribe();
         }, function(error) {

@@ -80,6 +80,7 @@
         <!-- Outer container that holds all the widgets -->
         <div id="widget" style="display: inline-grid;">
             <!-- addWidgetToDashboard will create individual divs inside this container dynamically -->
+            <input type="button" value="Reset" onclick=" definedVars = []; definedComponents = []; ">
             <input type="text" id="widgetName" placeholder="Widget Name">
             <input type="button" id="addComponent" value="Add Component">
         </div>
@@ -88,6 +89,15 @@
             <input type="button" id="preview" value="Preview Component">
             <div id="pre-widget"></div>
         </div>
+
+        <button type="button" id="submit" onclick="
+            if (widgetData !== null) {
+                var api = new Api();
+                api.postUserWidgets(widgetData, function(error) {
+                    alert(error);
+                })
+            }
+        " disabled>Submit Component</button>
     </div>
 </main>
 
@@ -107,13 +117,27 @@
 <!-- Moved at the bottom so the DOM loads before running script functions -->
 <!--<script src="scripts/app.js" async></script>-->
 <script>
+    var widgetData;
     var componentList = [];
 
     document.getElementById("addComponent").addEventListener('click', function() {
-        var type = document.createElement("INPUT");
-        type.setAttribute("class", "component");
-        type.setAttribute("type", "text");
-        type.setAttribute("placeholder", "type");
+        var componentElement = document.createElement("DIV")
+        componentElement.setAttribute("class", "col");
+
+	//Create the selector dropdown
+	var typeRemoveHolder = document.createElement("DIV")
+		//Create the remove widget button to remove this widget.
+		var removeButton = document.createElement("BUTTON");
+		removeButton.innerHTML = "Remove Component";	
+		removeButton.setAttribute("class", "component");
+
+		var type = document.createElement("SELECT");
+        	type.setAttribute("name", "type");
+		addComponentOptions(type);
+		type.setAttribute("class", "component");
+	$(typeRemoveHolder).append(removeButton);
+	$(typeRemoveHolder).append(type);
+	$(componentElement).append(typeRemoveHolder);
 
         var id = document.createElement("INPUT");
         id.setAttribute("class", "component");
@@ -135,10 +159,6 @@
         action.setAttribute("type", "text");
         action.setAttribute("placeholder", "action");
 
-        var componentElement = document.createElement("DIV")
-        componentElement.setAttribute("class", "col");
-
-        $(componentElement).append(type);
         $(componentElement).append(id);
         $(componentElement).append(hint);
         $(componentElement).append(value);
@@ -152,14 +172,22 @@
         component["value"] = value;
         component["action"] = action;
         componentList[componentList.length] = component;
+	
+	//add the compnent index to the data in the button so we can remove the component.
+	removeButton.addEventListener('click', function() {
+		var componentIndex = componentList.indexOf(component);
+		componentList.splice(componentIndex, 1);
+		console.log("Removed "+componentIndex);
+		$(componentElement).remove();
+	});       	
 
-        $(componentElement).insertAfter("#addComponent");
+	$(componentElement).insertAfter("#addComponent");
     });
 
     document.getElementById("preview").addEventListener('click', function() {
         var object = {
             cellLocation : 1,
-            type : document.getElementById("widgetName").value,
+            id : document.getElementById("widgetName").value,
             components : []
         };
 
@@ -176,14 +204,38 @@
         }
 
         console.log(object);
-        var widget = new Widget(object);
+        widgetData = object;
+        var widget = new Widget(widgetData);
         widget.getHTML(function (data) {
             console.log(data + " : ")
             var previewSpot = document.getElementById("pre-widget");
             previewSpot.innerHTML = data;
+            document.getElementById("submit").disabled = false;
         })
     });
 
+    function addComponentOptions(type) {
+	var option = document.createElement("OPTION");
+	option.setAttribute("value", "textBox");
+	option.innerHTML = "Text Box";
+	type.add(option);
+
+	option = document.createElement("OPTION");
+	option.setAttribute("value", "textRow");
+	option.innerHTML = "Text Row";
+	type.add(option);
+
+	option = document.createElement("OPTION");
+	option.setAttribute("value", "numberRow");
+	option.innerHTML = "Number Row";
+	type.add(option);
+
+	option = document.createElement("OPTION");
+	option.setAttribute("value", "button");
+	option.innerHTML = "Button";
+	type.add(option);
+	//All components are above.
+    }
 </script>
 
 
