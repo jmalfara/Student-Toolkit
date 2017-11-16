@@ -78,7 +78,7 @@ function Api() {
     this.postUserWidgets = function(widgetData, callback) {
         //Get the ID from the widget and use that for the push.
         var unsubscribe = firebase.auth().onAuthStateChanged(function (currentUser) {
-            var key = database.ref('userWidgets/'+currentUser.uid+'/').push();
+            var key = database.ref('userWidgets/'+currentUser.uid+'/'+widgetData.id+'/');
             key.set(widgetData, function (error) {
                 if (error !== null) {
                     callback(error);
