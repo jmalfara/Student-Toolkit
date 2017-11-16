@@ -78,6 +78,23 @@
 		}
 	}
 
+    // Drag & Drop for Dashboard Widgets - Early Stage
+	document.addEventListener("dragstart", function(event) {
+	    event.dataTransfer.setData("Text", event.target.id);
+	});
+
+	// Add the events fired on the drop target 
+	document.addEventListener("dragover", function(event) {
+	    event.preventDefault();
+	});
+
+	// Add the drop effect on the event triggered
+	document.addEventListener("drop", function(event) {
+	    event.preventDefault();
+	    var data = event.dataTransfer.getData("Text");
+	    event.target.appendChild(document.getElementById(data));
+	});
+
     /*****************************************************************************
     *
     * Methods to update/refresh the UI
