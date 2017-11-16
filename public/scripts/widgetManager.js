@@ -93,7 +93,7 @@ function buildTextRow(data, widgetId) {
 		var actionScript = action.getHTML(function (script) {
                		console.log("Component buildButton: " + component);
                		component += " oninput=\"" + script + "\"";
-			component += " value=\""+data.value.trim()+"\">";
+			component += " value=\""+data.value+"\">";
       			resolve(component);
 		});
 	}
@@ -106,7 +106,7 @@ function buildTextRow(data, widgetId) {
 //Textbox
 function buildTextbox(data, widgetId) {
 	return new Promise(function (resolve) {
-	if (data.action !== null && data.action.length !== 0) {
+	if (('action' in data) && data.action !== null && data.action.length !== 0) {
     		var action = new Action(data.action, widgetId);
 		var actionScript = action.getHTML(function (script) {
 	    		var component = "<textarea data="+'\''+JSON.stringify(data)+'\''+" oninput=\""+script+"\" class='component' id=\""+data.id+"\" placeholder=\""+data.hint+"\">"+data.value.trim()+"</textarea>";
@@ -122,6 +122,7 @@ function buildTextbox(data, widgetId) {
 
 //numberRow
 function buildNumberRow(data, widgetId){
+	console.log(data);
 	return new Promise(function (resolve) {
         	var component = "<input "
 		component += " data="+'\''+JSON.stringify(data)+'\'';
@@ -129,16 +130,16 @@ function buildNumberRow(data, widgetId){
 		component += " type=\"number\"";
 		component += " id=\""+data.id+"\"";
 		component += " placeholder=\""+data.hint+"\"";
-		if (data.action !== null && data.action.length !== 0) {
+		if (('action' in data) && data.action !== null && data.action.length !== 0) {
 			var action = new Action(data.action, widgetId);
     			var actionScript = action.getHTML(function (script) {
        	        		component += " oninput=\"" + script + "\"";
-				component += " value=\""+data.value.trim()+"\">";
+				component += " value=\""+data.value+"\">";
 	      			resolve(component);
 			});
 		}
 
-		component += " value=\""+data.value.trim()+"\">";
+		component += " value=\""+data.value+"\">";
         	console.log("Component buildNumberRow: "+component);
         	resolve(component);
 	});
