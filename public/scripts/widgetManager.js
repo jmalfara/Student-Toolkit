@@ -14,8 +14,32 @@ function Widget(data){
 
     this.getUpdatedData = async function(callback) {
     	console.log("Get Updated Widget Data");
-		//TODO Dynamically build the widget from the elements on screen from widget id *
-		callback(widgetData);
+        var widgetID = widgetData.id;
+
+        console.log("widget ID:     "+ widgetID);
+
+        var childrenNodes = document.getElementById(widgetID).childNodes;
+        var len = childrenNodes.length;
+        if(len --) do {
+            var attributeData = (childrenNodes[len].getAttribute('data'));
+            var json = JSON.parse(attributeData);
+
+            if (json.type == "numberRow"){
+                var numberRowID = (json.id);
+                var word = document.getElementById(numberRowID).value;
+                var updatedData = "<input data=" +attributeData +" class=" +'"component"' +" type="+'"number"' + " id=" +'"' +numberRowID +'"' + " value=" +'"' +word +'"' +">";
+                console.log(updatedData);
+
+			}
+
+        } while(len --);
+
+
+
+
+        //TODO Dynamically build the widget from the elements on screen from widget id *
+        callback(updatedData);
+
     }
 }
 
@@ -108,7 +132,7 @@ function Action(data, parent) {
 			if (params.length !== 0) {
 				params[params.length-1] = params[params.length-1].replace(')', ' ').trim();
 			}
-			console.log(params);
+			console.log("params: "+params);
 
 			if (action === "ADD") {
 				scriptHtml += 'actions.add(\''+params[0]+'\', \''+params[1]+'\', \''+params[2]+'\');';
@@ -126,6 +150,7 @@ function Action(data, parent) {
 				scriptHtml += 'actions.clone(\''+params[0]+'\', \''+params[1]+'\', \''+params[2]+'\');';
 			} else if (action === "PUSH") {
 				scriptHtml += "pushWidget('"+parentId+"');";
+
 			} else {
 				console.log("Undefined Action"+action);
 			}
