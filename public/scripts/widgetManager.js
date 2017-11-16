@@ -16,27 +16,28 @@ function Widget(data){
     	console.log("Get Updated Widget Data");
         var widgetID = widgetData.id;
 
-        console.log("widget ID:     "+ widgetID);
-
         var childrenNodes = document.getElementById(widgetID).childNodes;
         var len = childrenNodes.length;
+        var jsonArray=[];
         if(len --) do {
+
             var attributeData = (childrenNodes[len].getAttribute('data'));
             var json = JSON.parse(attributeData);
-            api.postUserWidgets(json,callback);
-            //console.log("JSON OBJECT:",json);
-            //if (json.type == "numberRow"){
-              //  console.log(json);
-                //var numberRowID = (json.id);
-                //var word = document.getElementById(numberRowID).value;
-                //var updatedData = "<input data=" +attributeData +" class=" +'"component"' +" type="+'"number"' + " id=" +'"' +numberRowID +'"' + " value=" +'"' +word +'"' +">";
-                //console.log(updatedData);
-                //api.postUserWidgets(json,callback);
-
-			//}
-
+            var componentID = json.id;
+            if (componentID != null){
+                var newValue = document.getElementById(componentID).value;
+                json.value = newValue;
+            }
+            jsonArray.push(json);
         } while(len --);
 
+        var updatedData = {
+            cellLocation: 1,
+            components: jsonArray,
+            id: widgetID
+        }
+        console.log(updatedData);
+        api.postUserWidgets(updatedData,callback);
         //TODO Dynamically build the widget from the elements on screen from widget id *
         //callback(updatedData);
 
