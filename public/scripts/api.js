@@ -9,11 +9,14 @@ function Api() {
         messagingSenderId: "712182325492"
     };
 
-    // Initialize the default app
-    firebase.initializeApp(config);
+    if (firebase !== 'undefined' && !firebase.apps.length) {
+        // Initialize the default app
+        firebase.initializeApp(config);
+    }
 
     // database creation through firebase hosting
     var database = firebase.database();
+    var storage = firebase.storage();
 
     this.startLoginDialog = function(callback) {
         // FirebaseUI config.
@@ -136,5 +139,31 @@ function Api() {
 	        console.log(data.components);
             callback(data);
         })
+    };
+    
+    this.storeFile = function (file, callback) {
+        var storageRef = storage.ref(new Date().getTime()+"_"+file.name);
+        var uploadTask = storageRef.put(file);
+        // Listen for state changes, errors, and completion of the upload.
+        uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
+            function(snapshot) {
+                // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+                var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                console.log('Upload is ' + progress + '% done');
+                switch (snapshot.state) {
+                    case firebase.storage.TaskState.PAUSED: // or 'paused'
+                        console.log('Upload is paused');
+                        break;
+                    case firebase.storage.TaskState.RUNNING: // or 'running'
+                        console.log('Upload is running');
+                        break;
+                }
+            }, function(error) {
+                alert(error);
+            }, function() {
+                // Upload completed successfully, now we can get the download URL
+                var downloadURL = uploadTask.snapshot.downloadURL;
+                callback(downloadURL);
+            });
     }
 }

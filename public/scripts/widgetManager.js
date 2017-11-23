@@ -175,7 +175,6 @@ function buildButton(data, widgetId){
 	});
 }
 
-
 var definedVars = [];
 var definedComponents = [];
 function Action(data, parent) {
@@ -213,8 +212,11 @@ function Action(data, parent) {
 			} else if (action === "CLONE") {
 				scriptHtml += 'actions.clone(\''+params[0]+'\', \''+params[1]+'\', \''+params[2]+'\');';
 			} else if (action === "PUSH") {
-				scriptHtml += "pushWidget('"+parentId+"');";
-
+                scriptHtml += "pushWidget('" + parentId + "');";
+            } else if (action === "STOREFILE") {
+                scriptHtml += 'actions.storeFile(\''+params[0]+'\', \''+params[1]+'\');';
+			} else if (action === "RETRIEVEFILE") {
+                scriptHtml += 'actions.retrieveFile(\''+params[0]+'\', \''+params[1]+'\');';
 			} else {
 				console.log("Undefined Action"+action);
 			}
@@ -309,6 +311,53 @@ function Action(data, parent) {
 
 		var output = element1 + element2;
 		this.setValueFromId(dest, output);
+	}
+
+	//StoreFile
+	this.storeFile = function (nameDest, urlDest) {
+        //Create the selector then manually click it<input id="file-input" type="file" name="name" style="display: none;" />
+        fileSelector = document.createElement("input");
+        fileSelector.setAttribute("id", "file-input");
+        fileSelector.setAttribute("type", "file");
+
+        var actions = this;
+        //Create the change callback.
+        fileSelector.addEventListener('change', function (e) {
+            var file = fileSelector.files[0];
+            console.log(file.name);
+            var api = new Api();
+            api.storeFile(file, function (referenceId) {
+                actions.setValueFromId(urlDest, referenceId);
+                actions.setValueFromId(nameDest, file.name);
+            });
+        })
+
+        //Trigger it
+        $(fileSelector).trigger('click');
+        console.log("Triggered");
+    }
+
+	//RetrieveFile
+	this.retrieveFile = function (filenameSrc, urlSrc) {
+		var url= this.getValueFromID(urlSrc);
+		var filename = this.getValueFromID(filenameSrc);
+        // This can be downloaded directly:
+        var xhr = new XMLHttpRequest();
+        xhr.responseType = 'blob';
+        xhr.onload = function(event) {
+            var blob = xhr.response;
+            console.log(blob);
+            var a = document.createElement('a');
+            a.setAttribute("href",URL.createObjectURL(blob));
+            a.setAttribute("download", filename);
+            a.innerHTML = "CLICK ME";
+            a.click();
+
+            // $(a).insertAfter(".main");
+        };
+        console.log(url);
+        xhr.open('GET', url);
+        xhr.send();
 	}
 
 	//SETVALUE

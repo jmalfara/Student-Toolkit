@@ -56,6 +56,7 @@
 <script src="https://www.gstatic.com/firebasejs/4.5.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/4.5.0/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/4.5.0/firebase-database.js"></script>
+<script src="https://www.gstatic.com/firebasejs/4.5.0/firebase-storage.js"></script>
 <script src="https://cdn.firebase.com/libs/firebaseui/2.4.0/firebaseui.js"></script>
 
 <!--Init Jquery Things-->
@@ -92,12 +93,12 @@
 
         <button type="button" id="submit" onclick="
             if (widgetData !== null) {
-		convertIds(widgetData, function(newData) {
-	                var api = new Api();
-        	        api.postUserWidgets(newData, function(error) {
-                	    alert(error);
-                	});
-		});
+                convertIds(widgetData, function(newData) {
+                            var api = new Api();
+                            api.postUserWidgets(newData, function(error) {
+                                alert(error);
+                            });
+                });
             }
         " disabled>Submit Component</button>
     </div>
@@ -241,50 +242,60 @@
         option.setAttribute("value", "iFrame");
         option.innerHTML = "iFrame";
         type.add(option);
+
+        option = document.createElement("OPTION");
+        option.setAttribute("value", "hidden");
+        option.innerHTML = "Hidden";
+        type.add(option);
 	    //All components are above.
     }
 
 
     function convertIds(data, callback) {
-            var map = [];
-            //Change the id of the widget.
-            data.id = new Date().getTime()+data.id;
+        var map = [];
+        //Change the id of the widget.
+        data.id = new Date().getTime()+data.id;
 
-            for (componentIndex in data.components) {
-                var id = data.components[componentIndex].id;
-		if (typeof id != 'undefined') {
-                	var timestamp = new Date();
-                	var nId = timestamp.getTime()+id;
+        for (componentIndex in data.components) {
+            var id = data.components[componentIndex].id;
 
-	        	map[map.length] = { oldId : id, newId : nId };
-      	     	 	  //Change the ID of the component;
-               		data.components[componentIndex].id = nId;
-            	}
-	    }
+            if (typeof id !== 'undefined' && id !== null && id.length > 0) {
+                var timestamp = new Date();
+                var nId = timestamp.getTime()+id;
 
-            //Reiterate over components for actions. Rename all actions
-            for (componentIndex in data.components) {
-                var action = data.components[componentIndex].action;
-                if (typeof action == 'undefined' || action == null) {
-                    continue;
-                }
-
-                //Change the ids in the action
-                for (idIndex in map) {
-                    oldId = map[idIndex].oldId;
-                    newId = map[idIndex].newId;
-
-		    var regex = "(.*(,|\\())"+oldId+"(.*)";
-    		    var re = new RegExp(regex,"g");
-		    while (action.match(re) != null) {
-			    action = action.replace(re, "$1"+newId+"$3");
-        	            console.log("FROM "+oldId+" TO "+newId+" Action: "+action);
-		    }
-                }
-                data.components[componentIndex].action = action;
+                map[map.length] = { oldId : id, newId : nId };
+                //Change the ID of the component;
+                data.components[componentIndex].id = nId;
+            } else {
+                console.log("ID Skipped. Its empty")
             }
-	    console.log(data.components);
-            callback(data);
+        }
+        console.log(map);
+
+        //Reiterate over components for actions. Rename all actions
+        for (componentIndex in data.components) {
+            var action = data.components[componentIndex].action;
+
+            if (typeof action === 'undefined' || action === null) {
+                continue;
+            }
+
+            //Change the ids in the action
+            for (idIndex in map) {
+                oldId = map[idIndex].oldId;
+                newId = map[idIndex].newId;
+
+                var regex = "(.*(,|\\())"+oldId+"(.*)";
+                var re = new RegExp(regex,"g");
+                while (action.match(re) !== null) {
+                    action = action.replace(re, "$1"+newId+"$3");
+                    console.log("FROM "+oldId+" TO "+newId+" Action: "+action);
+                }
+            }
+            data.components[componentIndex].action = action;
+        }
+        console.log(data.components);
+        callback(data);
     }
 
 </script>
