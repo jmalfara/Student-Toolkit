@@ -217,26 +217,31 @@
     });
 
     function addComponentOptions(type) {
-	var option = document.createElement("OPTION");
-	option.setAttribute("value", "textBox");
-	option.innerHTML = "Text Box";
-	type.add(option);
+        var option = document.createElement("OPTION");
+        option.setAttribute("value", "textBox");
+        option.innerHTML = "Text Box";
+        type.add(option);
 
-	option = document.createElement("OPTION");
-	option.setAttribute("value", "textRow");
-	option.innerHTML = "Text Row";
-	type.add(option);
+        option = document.createElement("OPTION");
+        option.setAttribute("value", "textRow");
+        option.innerHTML = "Text Row";
+        type.add(option);
 
-	option = document.createElement("OPTION");
-	option.setAttribute("value", "numberRow");
-	option.innerHTML = "Number Row";
-	type.add(option);
+        option = document.createElement("OPTION");
+        option.setAttribute("value", "numberRow");
+        option.innerHTML = "Number Row";
+        type.add(option);
 
-	option = document.createElement("OPTION");
-	option.setAttribute("value", "button");
-	option.innerHTML = "Button";
-	type.add(option);
-	//All components are above.
+        option = document.createElement("OPTION");
+        option.setAttribute("value", "button");
+        option.innerHTML = "Button";
+        type.add(option);
+
+        option = document.createElement("OPTION");
+        option.setAttribute("value", "iFrame");
+        option.innerHTML = "iFrame";
+        type.add(option);
+	    //All components are above.
     }
 
 

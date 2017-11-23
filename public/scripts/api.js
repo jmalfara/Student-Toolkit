@@ -101,20 +101,21 @@ function Api() {
 
             for (componentIndex in snapshot.val().components) {
                 var id = data.components[componentIndex].id;
-		if (typeof id != 'undefined') {
+
+                if (typeof id !== 'undefined') {
                 	var timestamp = new Date();
                 	var nId = timestamp.getTime()+id;
 
-	        	map[map.length] = { oldId : id, newId : nId };
+	        	    map[map.length] = { oldId : id, newId : nId };
       	     	 	  //Change the ID of the component;
                		data.components[componentIndex].id = nId;
             	}
-	    }
+	        }
 
             //Reiterate over components for actions. Rename all actions
             for (componentIndex in data.components) {
                 var action = data.components[componentIndex].action;
-                if (typeof action == 'undefined' || action == null) {
+                if (typeof action === 'undefined' || action === null) {
                     continue;
                 }
 
@@ -123,16 +124,16 @@ function Api() {
                     oldId = map[idIndex].oldId;
                     newId = map[idIndex].newId;
 
-		    var regex = "(.*(,|\\())"+oldId+"(.*)";
-    		    var re = new RegExp(regex,"g");
-		    while (action.match(re) != null) {
-			    action = action.replace(re, "$1"+newId+"$3");
-        	            console.log("FROM "+oldId+" TO "+newId+" Action: "+action);
-		    }
+                    var regex = "(.*(,|\\())"+oldId+"(.*)";
+                        var re = new RegExp(regex,"g");
+                    while (action.match(re) !== null) {
+                        action = action.replace(re, "$1"+newId+"$3");
+                        console.log("FROM "+oldId+" TO "+newId+" Action: "+action);
+                    }
                 }
                 data.components[componentIndex].action = action;
             }
-	    console.log(data.components);
+	        console.log(data.components);
             callback(data);
         })
     }

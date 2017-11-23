@@ -64,7 +64,9 @@ function Component(data, id){
                 promise = buildButton(componentData, parentId);
             } else if (componentData.type === "hidden") {
                 promise = buildHidden(componentData);
-            }
+            } else if (componentData.type === "iFrame") {
+            	promise = buildIFrame(componentData);
+        	}
 
             promise.then(function (componentData) {
                 resolve(componentData);
@@ -99,6 +101,17 @@ function buildTextRow(data, widgetId) {
 		});
 	}
 	component += " value=\""+data.value.trim()+"\">";
+        console.log("Component end: "+component);
+        resolve(component);
+    });
+}
+
+function buildIFrame(data) {
+    return new Promise(function (resolve) {
+        var component = "<iframe "
+        component += " data="+'\''+JSON.stringify(data)+'\'';
+        component += " class='component' id=\""+data.id+"\"";
+        component += " src=\""+data.value.trim()+"\" allowfullscreen> iFrames not supported on your browser </iframe>";
         console.log("Component end: "+component);
         resolve(component);
     });
