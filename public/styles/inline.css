@@ -63,7 +63,7 @@ body {
   width: 100%;
   height: 56px;
   color: #FFF;
-  background: #403F48;
+  background: #332727;
   position: fixed;
   font-size: 20px;
   box-shadow: 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 2px 9px 1px rgba(0, 0, 0, 0.12), 0 4px 2px -2px rgba(0, 0, 0, 0.2);
@@ -208,6 +208,14 @@ body {
   margin: 5% 1% 0% 1%;
 }
 .col:first-child { margin-left: 0; }
+
+.tempcol {
+  display: block;
+  float:bottom;
+  margin: 0% 0% 0% 0%;
+}
+
+.tempcol:first-child { margin-left: 0; }
 
 /*  Column Grouping  */
 .group:before,

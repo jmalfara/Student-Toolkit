@@ -78,7 +78,7 @@
 		}
 	}
 
-    // Drag & Drop for Dashboard Widgets - Early Stage
+	// Drag & Drop for Dashboard Widgets - Early Stage
 	document.addEventListener("dragstart", function(event) {
 	    event.dataTransfer.setData("Text", event.target.id);
 	});
@@ -111,11 +111,28 @@
 			innerDiv.id = uniqid;
 
 			// Dump widget template data onto the div container
-			innerDiv.setAttribute("style","width:32.26%");
+			innerDiv.setAttribute("style","width:32.26%;box-shadow: 10px 10px 5px #888888");
+			innerDiv.style.position = "relative";
 			innerDiv.innerHTML = data;
+			console.log(data);
+			var temp = document.querySelector('[id]').id;
+			console.log(temp);
+
+			// Create a temp div 
+			var tempDiv = document.createElement('div');
+			tempDiv.className = 'tempcol';
+			tempDiv.setAttribute("style","width:100%; text-align:center;background-color: #6e2f32; color:white;box-shadow: 10px 10px 5px #888888;");
+			tempDiv.style.position = "absolute";
+			tempDiv.innerHTML += 'Move';
+			tempDiv.id = uniqid + 1;
 
 			// Add the newly created div into the dashboard container
 			document.getElementById("gridContainer").appendChild(innerDiv);
+			document.getElementById(innerDiv.id).appendChild(tempDiv);
+			
+			//Drag.init(document.getElementById(innerDiv.id));
+			Drag.init(tempDiv, innerDiv);
+			
         });
 
 		// Add the widget to the widget list.
