@@ -64,6 +64,11 @@
   <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
+  <!-- Include the Jquery Touch library for drag and drop on mobile devices -->
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+  <script src="scripts/jquery.touch-punch.min.js"></script>
+
   <!-- Compiled and minified Bootstrap JavaScript -->
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
@@ -80,7 +85,11 @@
   <main class="main">
 
     <!-- Outer container that holds all the widgets -->
-  	<div class="section group" id="gridContainer">
+  	<div class="dashboardContainer" id="gridContainer">
+	  <!--<div>Child Element 1</div>
+	  <div>Child Element 2</div>
+	  <div>Child Element 3</div>
+	  <div>Child Element 4</div>-->
 
       <!-- addWidgetToDashboard will create individual divs inside this container dynamically -->
 
@@ -118,6 +127,7 @@
   </div>
 
   <!-- Moved at the bottom so the DOM loads before running script functions -->
+  <script type="text/JavaScript" src="scripts/jquery.shapeshift.js"></script>
   <script type="text/javascript" src="scripts/dom-drag.js"></script>
   <script src="scripts/app.js" async></script>
 </body>

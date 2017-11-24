@@ -95,6 +95,13 @@
 	    event.target.appendChild(document.getElementById(data));
 	});
 
+	$(".dashboardContainer").shapeshift({
+    	minColumns: 1,
+    	gutterX: 50,
+    	colWidth: 10,
+    	animateOnInit: true,
+	});
+
     /*****************************************************************************
     *
     * Methods to update/refresh the UI
@@ -104,23 +111,20 @@
         widget.getHTML(function (data) {
 			// Create a inner div as a container for the entire widget
 			var innerDiv = document.createElement('div');
-			innerDiv.className = 'col';
 
 			// Add unique ID for each widget container
 			var uniqid = Date.now();
 			innerDiv.id = uniqid;
 
 			// Dump widget template data onto the div container
-			innerDiv.setAttribute("style","width:32.26%;box-shadow: 10px 10px 5px #888888");
-			innerDiv.style.position = "relative";
+			//innerDiv.setAttribute("style","width:32.26%;box-shadow: 10px 10px 5px #888888");
+			innerDiv.style.position = "absolute";
 			innerDiv.innerHTML = data;
 			console.log(data);
-			var temp = document.querySelector('[id]').id;
-			console.log(temp);
+
 
 			// Create a temp div 
 			var tempDiv = document.createElement('div');
-			tempDiv.className = 'tempcol';
 			tempDiv.setAttribute("style","width:100%; text-align:center;background-color: #6e2f32; color:white;box-shadow: 10px 10px 5px #888888;");
 			tempDiv.style.position = "absolute";
 			tempDiv.innerHTML += 'Move';
@@ -129,9 +133,15 @@
 			// Add the newly created div into the dashboard container
 			document.getElementById("gridContainer").appendChild(innerDiv);
 			document.getElementById(innerDiv.id).appendChild(tempDiv);
+
+				$(".dashboardContainer").shapeshift({
+			    	gutterX: 50,
+			    	gutterY: 100,
+			    	animateOnInit: true,
+				});
 			
 			//Drag.init(document.getElementById(innerDiv.id));
-			Drag.init(tempDiv, innerDiv);
+			//Drag.init(tempDiv, innerDiv);
 			
         });
 
