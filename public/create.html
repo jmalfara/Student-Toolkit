@@ -77,7 +77,7 @@
 
 <!-- Dashboard -->
 <main class="main">
-    <div id="container">
+    <div id="container" style="display: -webkit-inline-box;">
         <!-- Outer container that holds all the widgets -->
         <div id="widget" style="display: inline-grid;">
             <!-- addWidgetToDashboard will create individual divs inside this container dynamically -->
@@ -101,6 +101,34 @@
                 });
             }
         " disabled>Submit Component</button>
+
+       <div style="padding-left: 2%">
+           <b>Components</b><br>
+           - TextBox<br>
+           - TextArea<br>
+           - NumberBox<br>
+           - Button<br>
+           - iFrame<br>
+           <br>
+           <b>Actions</b><br>
+	   ** Add two number together and store it in DEST **<br>
+           - ADD(SRC1,SRC2,DEST)<br><br>
+           ** Subtract two numbers SRC1-SRC2 and store it in DEST **<br>
+           - SUBTRACT(SRC1,SRC2,DEST)<br><br>
+           ** Divide two numbers NUM / DENOM and store it in DEST **<br>
+           - DIVIDE(NUM,DENOM,DEST)<br><br>
+           ** Multiply two numbers SRC1 * SRC2 and store it in DEST **<br>
+           - MULTIPLY(SRC1,SRC2,DEST)<br><br>
+           ** Concatinate two texts SRC1 + SRC2 and store it in DEST **<br>
+           - CONCAT(SRC1,SRC2,DEST)<br><br>
+           ** Upload a file and store it in the cloud. Stores the filename in DEST_FILENAME and Stores the url in DEST_URL **<br>
+	   - STOREFILE(DEST_FILENAME,DEST_URL)<br><br>
+	   ** Retrieve a file from the cloud. Save file as SRC_FILENAME. File is downloaded from SRC_URL **<br>
+           - RETRIEVEFILE(SRC_FILENAME,SRC_URL)<br><br>
+           ** Update the database with the current widget values **<br>
+           - PUSH()<br><br>
+       </div>
+	
     </div>
 </main>
 

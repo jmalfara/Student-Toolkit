@@ -183,7 +183,7 @@ function Action(data, parent) {
 
 	this.getHTML = function(callback) {
 		//Attach the raw action data. This is used for saving widgets that have manually added components. This is not the best way but will be fine for now
-		var scriptHtml = " var actions = new Action("+null+");\n";
+		var scriptHtml = "async function run() { \n var actions = new Action("+null+");\n";
 		var actions = actionData.split(" ");
 
 		for (actionIndex in actions) {
@@ -193,38 +193,46 @@ function Action(data, parent) {
 			if (params.length !== 0) {
 				params[params.length-1] = params[params.length-1].replace(')', ' ').trim();
 			}
+
+			for (paramIndex in params) {
+                            var regex = '"(.*)"';
+                            var re = new RegExp(regex,"g");
+                            params[paramIndex] = params[paramIndex].replace(re, "&quot;$1&quot;");
+			}
+
 			console.log("params: "+params);
 
 			if (action === "CONCAT") {
-				scriptHtml += 'actions.concat(\''+params[0]+'\', \''+params[1]+'\', \''+params[2]+'\');';
+				scriptHtml += 'await actions.concat(\''+params[0]+'\', \''+params[1]+'\', \''+params[2]+'\');';
 			} else if (action === "ADD") {
-				scriptHtml += 'actions.add(\''+params[0]+'\', \''+params[1]+'\', \''+params[2]+'\');';
+				scriptHtml += 'await actions.add(\''+params[0]+'\', \''+params[1]+'\', \''+params[2]+'\');';
 			} else if (action === "SUBTRACT") {
-				scriptHtml += 'actions.subtract(\''+params[0]+'\', \''+params[1]+'\', \''+params[2]+'\');';
+				scriptHtml += 'await actions.subtract(\''+params[0]+'\', \''+params[1]+'\', \''+params[2]+'\');';
 			} else if (action === "MULTIPLY") {
-				scriptHtml += 'actions.multiply(\''+params[0]+'\', \''+params[1]+'\', \''+params[2]+'\');';
+				scriptHtml += 'await actions.multiply(\''+params[0]+'\', \''+params[1]+'\', \''+params[2]+'\');';
 			} else if (action === "DIVIDE") {
-				scriptHtml += 'actions.divide(\''+params[0]+'\', \''+params[1]+'\', \''+params[2]+'\');';
+				scriptHtml += 'await actions.divide(\''+params[0]+'\', \''+params[1]+'\', \''+params[2]+'\');';
 			} else if (action === "SETVALUE") {
-				scriptHtml += 'actions.setValue(\''+params[0]+'\', \''+params[1]+'\');';
+				scriptHtml += 'await actions.setValue(\''+params[0]+'\', \''+params[1]+'\');';
 			} else if (action === "DEFINE") {
-				scriptHtml += 'actions.define(\''+params[0]+'\');';
+				scriptHtml += 'await actions.define(\''+params[0]+'\');';
 			} else if (action === "CLONE") {
-				scriptHtml += 'actions.clone(\''+params[0]+'\', \''+params[1]+'\', \''+params[2]+'\');';
+				scriptHtml += 'await actions.clone(\''+params[0]+'\', \''+params[1]+'\', \''+params[2]+'\');';
 			} else if (action === "PUSH") {
-                scriptHtml += "pushWidget('" + parentId + "');";
-            } else if (action === "STOREFILE") {
-                scriptHtml += 'actions.storeFile(\''+params[0]+'\', \''+params[1]+'\');';
+                                scriptHtml += "pushWidget('" + parentId + "');";
+                        } else if (action === "STOREFILE") {
+                                scriptHtml += 'await actions.storeFile(\''+params[0]+'\', \''+params[1]+'\');';
 			} else if (action === "RETRIEVEFILE") {
-                scriptHtml += 'actions.retrieveFile(\''+params[0]+'\', \''+params[1]+'\');';
+                                scriptHtml += 'await actions.retrieveFile(\''+params[0]+'\', \''+params[1]+'\');';
 			} else {
 				console.log("Undefined Action"+action);
 			}
 
 			scriptHtml += "\n";
+                        scriptHtml += 'console.log(\'+Finshed Command'+actionIndex+'\');';
 		}
 
-		scriptHtml += " ";
+		scriptHtml += " } run();";
 		callback(scriptHtml);
 	};
 
@@ -233,6 +241,14 @@ function Action(data, parent) {
 		var tag = document.getElementById(id);
 
 		if (tag === null) {
+			//Check the regex to see if its a literal
+                        var regex = '"(.*)"';
+                        var re = new RegExp(regex,"g");
+                        if (id.match(re) != null) {
+                            //Its a match. Grab the group.
+			    console.log("Returning Literal"+id.replace(re, "$1"));
+                            return id.replace(re, "$1");
+                        }
 			//It might be an id.
 			return definedVars[id];
 		}
@@ -242,10 +258,12 @@ function Action(data, parent) {
 
 	this.setValueFromId = function(id, value) {
 		var tag = document.getElementById(id);
+		value = this.getValueFromID(value);
 		console.log("Setting: "+value);
 
 		if (tag === null) {
 			//Treat it as a defined id.
+			console.log("Tag is null "+id);
 			definedVars[id] = value;
 			return;
 		}
@@ -255,124 +273,161 @@ function Action(data, parent) {
 
 	//ADD
 	this.add = function(src1, src2, dest) {
-		var element1 = this.getValueFromID(src1);
-		var element2 = this.getValueFromID(src2);
-		if (isNaN(parseFloat(element1)) || isNaN(parseFloat(element2))) {
+		var api = this;
+                return new Promise(function(resolve) {
+         	    var element1 = api.getValueFromID(src1);
+		    var element2 = api.getValueFromID(src2);
+                    console.log(element1+":"+element2);
+		    if (isNaN(parseFloat(element1)) || isNaN(parseFloat(element2))) {
 			alert("NaN");
+                        resolve();
 			return;
-		}
-		var output = parseFloat(element1) + parseFloat(element2);
-		this.setValueFromId(dest, output);
+		    }
+		    var output = parseFloat(element1) + parseFloat(element2);
+		    api.setValueFromId(dest, "\""+output+"\"");
+                    resolve();
+		});
 	};
+
 
 	//SUBSTRACT
 	this.subtract = function(src1, src2, dest) {
-		var element1 = this.getValueFromID(src1);
-		var element2 = this.getValueFromID(src2);
-		if (isNaN(parseFloat(element1)) || isNaN(parseFloat(element2))) {
+		var api = this;
+                return new Promise(function(resolve) {
+		    var element1 = api.getValueFromID(src1);
+                    var element2 = api.getValueFromID(src2)
+                    if (isNaN(parseFloat(element1)) || isNaN(parseFloat(element2))) {
 			alert("NaN");
+                        resolve();
 			return;
-		}
-
-		var output = parseFloat(element1) - parseFloat(element2);
-		this.setValueFromId(dest, output);
+		    }
+		    var output = parseFloat(element1) - parseFloat(element2);
+		    api.setValueFromId(dest, "\""+output+"\"");
+                    resolve();
+		});
 	};
 
 	//MULTIPLY
 	this.multiply = function(src1, src2, dest) {
-		var element1 = this.getValueFromID(src1);
-		var element2 = this.getValueFromID(src2);
-		if (isNaN(parseFloat(element1)) || isNaN(parseFloat(element2))) {
+                var api = this;
+                return new Promise(function(resolve) {
+                    var element1 = api.getValueFromID(src1);
+		    var element2 = api.getValueFromID(src2);
+		    if (isNaN(parseFloat(element1)) || isNaN(parseFloat(element2))) {
 			alert("NaN");
+			resolve();
 			return;
-		}
-
-		var output = parseFloat(element1) * parseFloat(element2);
-		this.setValueFromId(dest, output);
+		    }
+		    var output = parseFloat(element1) * parseFloat(element2);
+		    api.setValueFromId(dest, "\""+output+"\"");
+                    resolve();
+                });
 	};
 
 	//DIVIDE
 	this.divide = function(num, denom, dest) {
-		var element1 = this.getValueFromID(num);
-		var element2 = this.getValueFromID(denom);
-			if (isNaN(parseFloat(element1)) || isNaN(parseFloat(element2))) {
+		var api = this;
+                return new Promise(function(resolve) {
+                    var element1 = api.getValueFromID(num);
+		    var element2 = api.getValueFromID(denom);
+	            if (isNaN(parseFloat(element1)) || isNaN(parseFloat(element2))) {
 			alert("NaN");
-			return;
-		}
-
-		var output = parseFloat(element1) / parseFloat(element2);
-		this.setValueFromId(dest, output);
+                        resolve();
+                        return;
+		    }
+		    var output = parseFloat(element1) / parseFloat(element2);
+		    api.setValueFromId(dest, "\""+output+"\"");
+                    resolve();
+                });
 	};
 
 	//Concat
 	this.concat = function(src1, src2, dest) {
-		var element1 = this.getValueFromID(src1);
+	    var api = this;
+            return new Promise(function(resolve) {
+          	var element1 = this.getValueFromID(src1);
 		var element2 = this.getValueFromID(src2);
 
 		var output = element1 + element2;
-		this.setValueFromId(dest, output);
+		api.setValueFromId(dest, "\""+output+"\"");
+                resolve();
+            });
 	}
 
 	//StoreFile
-	this.storeFile = function (nameDest, urlDest) {
-        //Create the selector then manually click it<input id="file-input" type="file" name="name" style="display: none;" />
-        fileSelector = document.createElement("input");
-        fileSelector.setAttribute("id", "file-input");
-        fileSelector.setAttribute("type", "file");
+	this.storeFile = async function (nameDest, urlDest) {
+            var api = this;
+	    return new Promise(function(resolve) {
+                //Create the selector then manually click it<input id="file-input" type="file" name="name" style="display: none;" />
+                fileSelector = document.createElement("input");
+                fileSelector.setAttribute("id", "file-input");
+                fileSelector.setAttribute("type", "file");
 
-        var actions = this;
-        //Create the change callback.
-        fileSelector.addEventListener('change', function (e) {
-            var file = fileSelector.files[0];
-            console.log(file.name);
-            var api = new Api();
-            api.storeFile(file, function (referenceId) {
-                actions.setValueFromId(urlDest, referenceId);
-                actions.setValueFromId(nameDest, file.name);
+                //Create the change callback.
+                fileSelector.addEventListener('change', function (e) {
+                    var file = fileSelector.files[0];
+                    console.log(file.name);
+                    api.storeFile(file, function (referenceId) {
+                        api.setValueFromId(urlDest, referenceId);
+                        api.setValueFromId(nameDest, file.name);
+                    });
+                });
+
+                //Trigger it
+                $(fileSelector).trigger('click');
+                console.log("Triggered");
+                resolve();
             });
-        })
-
-        //Trigger it
-        $(fileSelector).trigger('click');
-        console.log("Triggered");
-    }
+        }
 
 	//RetrieveFile
 	this.retrieveFile = function (filenameSrc, urlSrc) {
-		var url= this.getValueFromID(urlSrc);
-		var filename = this.getValueFromID(filenameSrc);
-        // This can be downloaded directly:
-        var xhr = new XMLHttpRequest();
-        xhr.responseType = 'blob';
-        xhr.onload = function(event) {
-            var blob = xhr.response;
-            console.log(blob);
-            var a = document.createElement('a');
-            a.setAttribute("href",URL.createObjectURL(blob));
-            a.setAttribute("download", filename);
-            a.innerHTML = "CLICK ME";
-            a.click();
-
-            // $(a).insertAfter(".main");
-        };
-        console.log(url);
-        xhr.open('GET', url);
-        xhr.send();
+            var api = this;
+            return new Promise(function(resolve) {
+                var url= api.getValueFromID(urlSrc);
+		var filename = api.getValueFromID(filenameSrc);
+                // This can be downloaded directly:
+                var xhr = new XMLHttpRequest();
+                xhr.responseType = 'blob';
+                xhr.onload = function(event) {
+                    var blob = xhr.response;
+                    console.log(blob);
+                    var a = document.createElement('a');
+                    a.setAttribute("href",URL.createObjectURL(blob));
+                    a.setAttribute("download", filename);
+                    a.innerHTML = "CLICK ME";
+                    a.click();
+                    // $(a).insertAfter(".main");
+                };
+                console.log(url);
+                xhr.open('GET', url);
+                xhr.send();
+                resolve();
+            });
 	}
 
 	//SETVALUE
 	this.setValue = function(value, dest) {
-		this.setValueFromId(dest, value);
+            var api = this;
+            return new Promise(function(resolve) {
+                api.setValueFromId(dest, value);
+            });
 	};
 
 	//Define a variable.
 	this.define = function(dest) {
+            var api = this;
+            return new Promise(function(resolve) {
 		definedVars[dest] = 0;
+                resolve();
+            });
 	};
 
 	//Clone Component
 	this.clone = function (src, dest, afterId) {
-		if( document.getElementById(dest) !== null ) {
+	     var api = this;
+             return new Promise(function(resolve) {
+               if( document.getElementById(dest) !== null ) {
 			//ID already defined.
 			console.error("Dest. already exists");
 			return;
@@ -390,6 +445,8 @@ function Action(data, parent) {
 
 		//Use jquery to push
 		$(clone).insertAfter("#"+afterId);
+                resolve();
+            });
 	};
 
     //setError
