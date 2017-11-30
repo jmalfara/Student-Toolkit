@@ -184,12 +184,18 @@ function Action(data, parent) {
 	this.getHTML = function(callback) {
 		//Attach the raw action data. This is used for saving widgets that have manually added components. This is not the best way but will be fine for now
 		var scriptHtml = "async function run() { \n var actions = new Action("+null+");\n";
-		var actions = actionData.split(" ");
+		var actions = actionData.split(")");
 
+		console.log(actions);
 		for (actionIndex in actions) {
+			if (actions[actionIndex].length == 0) {
+				continue;
+			}
+
 			var actionType = actions[actionIndex].split("(");
-			var action = actionType[0];
+			var action = actionType[0].trim();
 			var params = actionType[1].split(",");
+			console.log(actionType);
 			if (params.length !== 0) {
 				params[params.length-1] = params[params.length-1].replace(')', ' ').trim();
 			}
